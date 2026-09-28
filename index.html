@@ -7,11 +7,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Horizon</title>
     
-    <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦉</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- FIREBASE SDKS -->
     <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-database-compat.js"></script>
 
@@ -50,9 +48,7 @@
         
         body { 
             background-color: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: row; overflow: hidden; transition: background-color 0.3s; 
-            padding-top: env(safe-area-inset-top);
-            padding-left: env(safe-area-inset-left);
-            padding-right: env(safe-area-inset-right);
+            padding-top: env(safe-area-inset-top); padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right);
         }
 
         ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -102,69 +98,46 @@
         /* Timetable View */
         #view-timetable { flex-direction: row; }
         .main-container { display: flex; flex: 1; overflow: hidden; width: 100%; }
-        .timetable-wrapper { flex: 1; overflow: auto; padding: 16px 24px; display: flex; flex-direction: column; align-items: center; position: relative;}
+        .timetable-wrapper { flex: 1; overflow: auto; padding: 16px 24px; display: flex; flex-direction: column; align-items: center; gap: 16px; position: relative;}
         .sidebar { width: 340px; background-color: var(--panel); border-left: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; box-shadow: -4px 0 20px rgba(0,0,0,0.1); z-index: 10; }
         
-        .timetable-toolbar { display: flex; justify-content: center; align-items: center; padding: 12px 24px; gap: 16px; width: 100%; max-width: 1250px; background: var(--panel); border-radius: var(--radius-md); border: 1px solid var(--border); box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 16px; flex-shrink: 0;}
+        .timetable-toolbar { display: flex; justify-content: center; align-items: center; padding: 12px 24px; gap: 16px; width: 100%; max-width: 1250px; background: var(--panel); border-radius: var(--radius-md); border: 1px solid var(--border); box-shadow: 0 4px 10px rgba(0,0,0,0.1); flex-shrink: 0;}
         .week-label { font-size: 1rem; font-weight: 600; min-width: 220px; text-align: center; color: var(--primary); letter-spacing: -0.3px; }
 
-        /* =========================================================
-           LƯỚI LỊCH: ĐÃ THÊM BÓNG ĐỔ (SHADOW) ĐỂ PHÂN LỚP CHIỀU SÂU
-           ========================================================= */
+        /* BẢNG LỊCH PHẲNG (KHÔNG LỖI CHỒNG LẤN) */
         .timetable { 
             display: grid; 
-            grid-template-columns: 80px repeat(6, minmax(160px, 1fr)); 
+            grid-template-columns: 80px repeat(6, minmax(150px, 1fr)); 
             grid-template-rows: 45px repeat(15, minmax(85px, 1fr)); 
-            gap: 0; /* Lưới liền khối */
-            width: 100%; max-width: 1300px; height: fit-content; 
-            padding-bottom: 80px; position: relative;
+            gap: 6px; 
+            width: 100%; max-width: 1300px; height: fit-content; padding-bottom: 80px; position: relative;
         }
         
         .grid-header { 
-            background-color: var(--panel); 
+            background-color: var(--panel-light); border-radius: var(--radius-sm); 
             display: flex; align-items: center; justify-content: center; 
-            font-weight: 600; font-size: 0.85rem; color: var(--text-muted); 
-            border-bottom: 1px solid var(--border); 
-            border-right: 1px solid var(--border);
-            position: sticky; top: 0; z-index: 25; 
-            /* Bóng đổ nhẹ cho hàng trên cùng */
-            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-        }
-        
-        /* GÓC GIAO ĐIỂM (CỐ ĐỊNH CẢ TOP VÀ LEFT, Z-INDEX CAO NHẤT) */
-        .grid-header:first-child { 
-            position: sticky; top: 0; left: 0; z-index: 40; 
-            border-right: 1px solid var(--border); 
-            /* Đổ bóng sang phải và xuống dưới để tạo hiệu ứng lớp nổi */
-            box-shadow: 3px 3px 10px rgba(0,0,0,0.25); 
+            font-weight: 600; font-size: 0.9rem; color: var(--text-muted); 
+            border: 1px solid var(--border); 
         }
         
         .grid-time { 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            font-size: 0.75rem; color: var(--text-muted); background: var(--panel); 
-            border-bottom: 1px dashed var(--border); 
-            border-right: 1px solid var(--border);
-            position: sticky; left: 0; z-index: 20;
-            /* Đổ bóng nhẹ sang phải để cho thấy Thẻ đang trượt phía dưới */
-            box-shadow: 3px 0 10px -2px rgba(0,0,0,0.25);
+            font-size: 0.75rem; color: var(--text-muted); background: rgba(255,255,255,0.02); 
+            border-radius: var(--radius-sm); border: 1px dashed var(--border);
         }
         .grid-time strong { font-size: 0.85rem; color: var(--text); font-weight: 700; margin-bottom: 2px; }
         
         .grid-cell { 
-            background-color: transparent; 
-            border-bottom: 1px dashed var(--cell-border); 
-            border-right: 1px dashed var(--cell-border);
-            transition: 0.2s; 
+            background-color: var(--cell-bg); border: 1px dashed var(--cell-border); 
+            border-radius: var(--radius-sm); transition: 0.2s; 
         }
-        .grid-cell.drag-over { background-color: rgba(56, 189, 248, 0.1); }
+        .grid-cell.drag-over { background-color: rgba(56, 189, 248, 0.1); border: 2px dashed var(--primary); }
 
         .course-card { 
-            border-radius: var(--radius-sm); padding: 10px; font-size: 0.8rem; color: #ffffff; cursor: pointer; 
-            overflow: hidden; display: flex; flex-direction: column; z-index: 10; 
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
-            border: 1px solid rgba(255, 255, 255, 0.2); position: relative; 
-            margin: 3px; 
-            /* Thẻ luôn nằm dưới (Z-index thấp hơn) so với cột thời gian khi cuộn */
+            border-radius: var(--radius-md); padding: 10px; font-size: 0.8rem; color: #ffffff; cursor: pointer; 
+            overflow: hidden; display: flex; flex-direction: column; z-index: 5; 
+            box-shadow: var(--shadow); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
+            border: 1px solid rgba(255, 255, 255, 0.2); position: relative; width: 100%; height: 100%;
         }
         .course-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 100%; background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 100%); pointer-events: none; }
         .course-card:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 10px 25px rgba(0,0,0,0.5); filter: brightness(1.1); z-index: 15; }
@@ -256,6 +229,7 @@
         .k-tab { flex: 1; text-align: center; padding: 6px 0; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); cursor: pointer; border-radius: 4px; transition: 0.2s; }
         .k-tab.active { background: var(--panel-light); color: var(--primary); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
 
+        /* DASHBOARD */
         #view-dashboard { flex-direction: column; overflow-y: auto; padding: 24px 32px; gap: 24px; background: var(--bg); }
         .dash-header h2 { font-size: 1.8rem; margin-bottom: 4px; color: var(--text); letter-spacing: -0.5px; }
         .dash-header p { color: var(--text-muted); font-size: 0.9rem; }
@@ -336,7 +310,7 @@
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
         /* =========================================================
-           MOBILE RESPONSIVE DESIGN (BẢN FIX LỖI TAI THỎ / GHI ĐÈ BÓNG ĐỔ)
+           MOBILE RESPONSIVE DESIGN (GIAO DIỆN HOÀN HẢO CHO IPHONE)
            ========================================================= */
         @media (max-width: 768px) {
             body { 
@@ -356,45 +330,41 @@
                 justify-content: space-around; 
                 background: rgba(17, 24, 39, 0.95); backdrop-filter: blur(10px);
                 padding-bottom: max(10px, env(safe-area-inset-bottom)); 
-                height: auto; min-height: calc(65px + env(safe-area-inset-bottom));
+                height: auto;
+                min-height: calc(65px + env(safe-area-inset-bottom));
             }
             .brand, .launchpad, .user-profile-mini { display: none; }
             .nav-item { flex: 1; justify-content: center; padding: 8px 0; margin: 0; flex-direction: column; gap: 4px; }
             .nav-item span { font-size: 1.4rem; margin: 0; }
-            .nav-item { font-size: 0; } 
+            .nav-item { font-size: 0; }
             
             .app-main { padding-bottom: calc(65px + env(safe-area-inset-bottom)); } 
             
             #view-timetable .main-container { flex-direction: column; overflow-y: auto; overflow-x: hidden; }
             
-            .timetable-wrapper { order: 1; width: 100%; height: 60vh; flex: none; overflow: auto; padding: 0;}
-            .timetable-toolbar { margin-top: 10px; margin-bottom: 10px; width: 95%; }
+            /* SỬA LỖI OVERLAP: Cho phép bảng cuộn ngang hoàn toàn tự nhiên */
+            .timetable-wrapper { 
+                order: 1; width: 100%; flex: none; padding: 16px;
+                overflow-x: auto; -webkit-overflow-scrolling: touch; /* Trượt mượt trên iPhone */
+            }
+            .timetable-toolbar { margin-top: 10px; margin-bottom: 10px; width: 100%; }
+            
             .timetable { 
-                min-width: 800px; padding-bottom: 30px; position: relative;
-                gap: 0; grid-template-columns: 75px repeat(6, minmax(160px, 1fr));
+                min-width: 800px; /* Bắt buộc bảng phải rộng để vuốt ngang */
+                gap: 6px; 
             }
             
-            /* GÓC TRÊN CÙNG BÊN TRÁI ĐƯỢC GHIM CHẶT */
-            .grid-header:first-child { 
-                position: sticky; top: 0; left: 0; z-index: 40; 
-                border-right: 1px solid var(--border); border-bottom: 1px solid var(--border);
-                box-shadow: 4px 0 12px -2px rgba(0,0,0,0.3); /* Bóng đổ tạo độ sâu phân lớp */
-            }
-            .grid-header { 
-                position: sticky; top: 0; z-index: 25; background: var(--panel); 
-                border-bottom: 1px solid var(--border);
-            }
-            .grid-time { 
-                position: sticky; left: 0; z-index: 20; background: var(--panel); 
-                border-right: 1px solid var(--border); border-bottom: 1px solid var(--border);
-                box-shadow: 4px 0 12px -2px rgba(0,0,0,0.3); /* Bóng đổ tạo độ sâu phân lớp */
+            /* LOẠI BỎ TOÀN BỘ CÁC THUỘC TÍNH STICKY GÂY LỖI TRÊN MOBILE */
+            .grid-header, .grid-header:first-child, .grid-time {
+                position: relative !important;
+                top: auto !important;
+                left: auto !important;
+                z-index: 1 !important;
+                box-shadow: none !important;
             }
             
-            .course-card { margin: 3px; width: auto; z-index: 10; }
-            .course-card:hover { z-index: 15; }
-
             .sidebar { width: 100%; order: 2; border-left: none; border-top: 1px solid var(--border); box-shadow: none; height: auto; overflow: visible;}
-            
+
             .dash-charts { grid-template-columns: 1fr; }
             .form-row { flex-direction: column; gap: 10px; }
             .modal { max-height: 80vh; width: 92%; margin: 0 auto; z-index: 2005; }
@@ -408,21 +378,26 @@
 </head>
 <body>
 
+    <!-- === LEFT TASKBAR === -->
     <nav class="left-nav">
         <div class="brand"><span>🎓</span> Horizon</div>
+        
         <div class="launchpad">
             <a href="https://portal.uit.edu.vn/" target="_blank" class="launch-btn" title="Portal UIT">🏫</a>
             <a href="https://github.com" target="_blank" class="launch-btn" title="GitHub">🐙</a>
             <a href="https://leetcode.com" target="_blank" class="launch-btn" title="LeetCode">💻</a>
             <a href="https://chatgpt.com" target="_blank" class="launch-btn" title="ChatGPT">🤖</a>
         </div>
+
         <a class="nav-item active" id="nav-timetable" onclick="switchView('view-timetable', this)"><span>📅</span> Thời khóa biểu</a>
         <a class="nav-item" id="nav-sheet" onclick="switchView('view-sheet', this)"><span>📑</span> Kế hoạch Đại học</a>
         <a class="nav-item" id="nav-dashboard" onclick="switchView('view-dashboard', this)"><span>📊</span> Dashboard</a>
         <a class="nav-item" id="nav-roadmap" onclick="switchView('view-roadmap', this)"><span>🎯</span> Các mục tiêu</a>
+        
         <a class="nav-item" id="nav-pomodoro" onclick="switchView('view-pomodoro', this)"><span>⏱️</span> Tập trung (Pomodoro)</a>
         <a class="nav-item" id="nav-profile" onclick="switchView('view-profile', this)"><span>👤</span> Thông tin cá nhân</a>
         <a class="nav-item" onclick="toggleTheme()" style="margin-top: 8px;"><span id="theme-icon">🌓</span> Giao diện</a>
+        
         <div class="user-profile-mini" onclick="switchView('view-profile', document.getElementById('nav-profile'))">
             <div class="avatar" id="mini-prof-avatar">V</div>
             <div class="user-info-mini">
@@ -432,6 +407,7 @@
         </div>
     </nav>
 
+    <!-- === MAIN CONTENT === -->
     <div class="app-main">
         <header>
             <div class="header-left">
@@ -449,6 +425,7 @@
             </div>
         </header>
 
+        <!-- VIEW 1: THỜI KHÓA BIỂU -->
         <div id="view-timetable" class="view-section active">
             <div class="main-container">
                 <div class="timetable-wrapper">
@@ -505,6 +482,7 @@
             </div>
         </div>
 
+        <!-- VIEW GOOGLE SHEET NHÚNG (KẾ HOẠCH ĐẠI HỌC) -->
         <div id="view-sheet" class="view-section">
             <div class="sheet-container">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
@@ -515,6 +493,7 @@
             </div>
         </div>
 
+        <!-- VIEW LỘ TRÌNH CÔNG NGHỆ -->
         <div id="view-roadmap" class="view-section">
             <div class="roadmap-header">
                 <div>
@@ -542,6 +521,7 @@
                 <h3 style="font-size:0.95rem; margin-bottom:12px; color: var(--text);">+ Thêm mục tiêu mới</h3>
                 <div class="add-goal-form">
                     <input type="text" id="goalTitle" placeholder="Tên kỹ năng / Mục tiêu tổng quát (VD: Master C++ Pointers)..." style="font-weight: bold;">
+                    
                     <div class="add-goal-row">
                         <select id="goalCat" style="flex:1;">
                             <option value="prog">💻 Lập trình / Chuyên ngành</option>
@@ -559,7 +539,9 @@
                         </select>
                         <input type="date" id="goalDate" title="Deadline dự kiến" style="display:none; flex:1;">
                     </div>
+                    
                     <textarea id="goalSubtasks" placeholder="Chia nhỏ mục tiêu (Tùy chọn) - Mỗi dòng 1 gạch đầu dòng (VD: \n1. Học OOP\n2. Nắm vững Con trỏ\n3. Làm bài tập Array)"></textarea>
+                    
                     <button class="btn btn-primary" style="margin-top: 8px; width: fit-content; padding: 10px 24px;" onclick="addGoal()">+ Khởi tạo lộ trình</button>
                 </div>
             </div>
@@ -567,6 +549,7 @@
             <div class="roadmap-grid" id="roadmapGrid"></div>
         </div>
 
+        <!-- VIEW DASHBOARD -->
         <div id="view-dashboard" class="view-section">
             <div class="dash-header">
                 <h2>Xin chào, <span id="dash-greeting-name">User</span> 👋</h2>
@@ -591,6 +574,7 @@
             </div>
         </div>
 
+        <!-- VIEW POMODORO -->
         <div id="view-pomodoro" class="view-section">
             <div class="pomo-card">
                 <div class="pomo-modes">
@@ -610,6 +594,7 @@
             </div>
         </div>
 
+        <!-- VIEW PROFILE -->
         <div id="view-profile" class="view-section">
             <div class="profile-card">
                 <div class="profile-header-info">
@@ -660,6 +645,27 @@
         </div>
     </div>
 
+    <!-- MODAL QUẢN LÝ DỮ LIỆU -->
+    <div class="modal-overlay" id="dataModalOverlay">
+        <div class="modal" style="max-width: 420px;">
+            <div class="modal-header"><h2 style="font-size: 1.1rem;">Quản lý dữ liệu</h2><button class="icon-btn" style="padding: 4px 8px; border:none;" onclick="closeModal('dataModalOverlay')">✕</button></div>
+            <div class="modal-body" style="padding: 16px 24px;">
+                <textarea id="pasteDataInput" placeholder="Dán nội dung file JSON hoặc ICS vào đây (Ctrl+V)..." style="width: 100%; height: 100px; background: var(--cell-bg); border: 1px solid var(--border); color: var(--text); padding: 10px; border-radius: var(--radius-sm); outline: none; margin-bottom: 8px; font-size: 0.85rem; resize: none;"></textarea>
+                <button class="btn btn-primary btn-full" onclick="importFromPastedText()">Nhập từ văn bản vừa dán</button>
+                
+                <div style="display:flex; align-items:center; gap:10px; margin: 12px 0;">
+                    <div style="flex:1; height:1px; background:var(--border);"></div>
+                    <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">HOẶC CHỌN FILE</span>
+                    <div style="flex:1; height:1px; background:var(--border);"></div>
+                </div>
+
+                <label class="btn btn-full" style="cursor:pointer; background:var(--panel-light); border: 1px solid var(--border);"><input type="file" accept=".json" onchange="importJSON(event)">📁 Tải lên File (.json)</label>
+                <label class="btn btn-full" style="cursor:pointer; background:var(--panel-light); border: 1px solid var(--border);"><input type="file" accept=".ics" onchange="importICS(event)">📅 Tải lên File (.ics)</label>
+                <button class="btn btn-full" style="border-color:var(--primary); color:var(--primary); margin-top: 4px;" onclick="exportJSON()">⬇️ Xuất dữ liệu (File .json)</button>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL THÊM SỰ KIỆN -->
     <div class="modal-overlay" id="courseModalOverlay">
         <div class="modal">
@@ -695,31 +701,10 @@
                 <div class="form-group"><label>Màu hiển thị</label><div class="color-list" id="colorPicker"></div></div>
             </div>
             <div class="modal-footer">
-                <button class="btn" id="btnDelete" style="color:var(--danger); display:none; margin-right:auto;" onclick="deleteCourse()">Xóa</button>
-                <button class="btn" id="btnDuplicate" style="color:var(--primary); display:none;" onclick="duplicateCourse()">Nhân bản</button>
+                <button class="btn" id="btnDelete" style="color:var(--danger); display:none; margin-right:auto;" onclick="deleteCourse()">Xóa sự kiện</button>
+                <button class="btn" id="btnDuplicate" style="color:var(--primary); display:none;" onclick="duplicateCourse()">Nhân bản (Copy)</button>
                 <button class="btn" onclick="closeModal('courseModalOverlay')">Hủy</button>
                 <button class="btn btn-primary" onclick="saveCourse()" style="padding: 8px 24px;">Lưu lại</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL QUẢN LÝ DỮ LIỆU -->
-    <div class="modal-overlay" id="dataModalOverlay">
-        <div class="modal" style="max-width: 420px;">
-            <div class="modal-header"><h2 style="font-size: 1.1rem;">Quản lý dữ liệu</h2><button class="icon-btn" style="padding: 4px 8px; border:none;" onclick="closeModal('dataModalOverlay')">✕</button></div>
-            <div class="modal-body" style="padding: 16px 24px;">
-                <textarea id="pasteDataInput" placeholder="Dán nội dung file JSON hoặc ICS vào đây (Ctrl+V)..." style="width: 100%; height: 100px; background: var(--cell-bg); border: 1px solid var(--border); color: var(--text); padding: 10px; border-radius: var(--radius-sm); outline: none; margin-bottom: 8px; font-size: 0.85rem; resize: none;"></textarea>
-                <button class="btn btn-primary btn-full" onclick="importFromPastedText()">Nhập từ văn bản vừa dán</button>
-                
-                <div style="display:flex; align-items:center; gap:10px; margin: 12px 0;">
-                    <div style="flex:1; height:1px; background:var(--border);"></div>
-                    <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">HOẶC CHỌN FILE</span>
-                    <div style="flex:1; height:1px; background:var(--border);"></div>
-                </div>
-
-                <label class="btn btn-full" style="cursor:pointer; background:var(--panel-light); border: 1px solid var(--border);"><input type="file" accept=".json" onchange="importJSON(event)">📁 Tải lên File (.json)</label>
-                <label class="btn btn-full" style="cursor:pointer; background:var(--panel-light); border: 1px solid var(--border);"><input type="file" accept=".ics" onchange="importICS(event)">📅 Tải lên File (.ics)</label>
-                <button class="btn btn-full" style="border-color:var(--primary); color:var(--primary); margin-top: 4px;" onclick="exportJSON()">⬇️ Xuất dữ liệu (File .json)</button>
             </div>
         </div>
     </div>
@@ -739,9 +724,15 @@
         };
         
         let db = null;
-        try { firebase.initializeApp(firebaseConfig); db = firebase.database(); } catch (error) { console.error("Firebase Lỗi:", error); }
+        try {
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.database();
+        } catch (error) {
+            console.error("Firebase Lỗi:", error);
+        }
 
         const DB_KEY = 'horizon_user_data_trieu';
+
         const STORAGE_KEY = 'tkb_desktop_app_data';
         const COLORS = ['#9f1239', '#166534', '#075985', '#3730a3', '#5b21b6', '#9a3412', '#86198f', '#0f766e', '#1e3a8a', '#3f6212', '#831843', '#334155'];
         const periods = [
@@ -767,44 +758,69 @@
                 const saved = localStorage.getItem(STORAGE_KEY);
                 if (saved) { state = { ...state, ...JSON.parse(saved) }; cleanUpData(); }
                 applyTheme(); renderAll(); renderProfile(); renderRoadmap();
-                showToast("Dùng chế độ Offline 🚫☁️"); return;
+                showToast("Dùng chế độ Offline 🚫☁️");
+                return;
             }
+
             setSyncing(true);
             db.ref(DB_KEY).once('value').then((snapshot) => {
                 const cloudData = snapshot.val();
-                if (cloudData) { state = { ...state, ...cloudData }; cleanUpData(); setSyncing(false); showToast("Đã đồng bộ Đám mây ☁️");
+                if (cloudData) {
+                    state = { ...state, ...cloudData };
+                    cleanUpData();
+                    setSyncing(false);
+                    showToast("Đã đồng bộ Đám mây ☁️");
                 } else {
                     const saved = localStorage.getItem(STORAGE_KEY);
-                    if (saved) { state = { ...state, ...JSON.parse(saved) }; cleanUpData(); db.ref(DB_KEY).set(state); }
+                    if (saved) { 
+                        state = { ...state, ...JSON.parse(saved) }; 
+                        cleanUpData();
+                        db.ref(DB_KEY).set(state);
+                    }
                     setSyncing(false);
                 }
                 applyTheme(); renderAll(); renderProfile(); renderRoadmap();
             }).catch(error => {
-                setSyncing(false); document.getElementById('cloud-sync-icon').textContent = '❌';
-                const saved = localStorage.getItem(STORAGE_KEY); if (saved) { state = { ...state, ...JSON.parse(saved) }; cleanUpData(); }
+                setSyncing(false);
+                document.getElementById('cloud-sync-icon').textContent = '❌';
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) { state = { ...state, ...JSON.parse(saved) }; cleanUpData(); }
                 applyTheme(); renderAll(); renderProfile(); renderRoadmap();
             });
         }
 
         function saveState() { 
             localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); 
-            if (db) { setSyncing(true); db.ref(DB_KEY).set(state).then(() => { setSyncing(false); }).catch(err => { setSyncing(false); document.getElementById('cloud-sync-icon').textContent = '⚠️'; }); }
+            if (db) {
+                setSyncing(true);
+                db.ref(DB_KEY).set(state).then(() => {
+                    setSyncing(false);
+                }).catch(err => {
+                    setSyncing(false); document.getElementById('cloud-sync-icon').textContent = '⚠️';
+                });
+            }
             renderAll(); renderRoadmap(); 
         }
 
         function manualSync() { showToast("Đang đồng bộ..."); init(); }
         function setSyncing(isSyncing) {
             const icon = document.getElementById('cloud-sync-icon');
-            if(isSyncing) { icon.classList.add('syncing'); icon.textContent = '🔄'; } else { icon.classList.remove('syncing'); icon.textContent = '☁️'; }
+            if(isSyncing) { icon.classList.add('syncing'); icon.textContent = '🔄'; } 
+            else { icon.classList.remove('syncing'); icon.textContent = '☁️'; }
         }
 
         function cleanUpData() {
-            if(!state.kanbanTasks) state.kanbanTasks = []; if(!state.gpaData) state.gpaData = []; if(!state.goals) state.goals = [];
+            if(!state.kanbanTasks) state.kanbanTasks = [];
+            if(!state.gpaData) state.gpaData = [];
+            if(!state.goals) state.goals = [];
             if(!state.profile) state.profile = { name: 'User', role: '', major: '', email: '', pastCredits: 0 };
             if(state.profile.pastCredits === undefined) state.profile.pastCredits = 0;
+            
             let cleanedCourses = [];
             state.courses.forEach(c => {
-                if (isNaN(c.startPeriod) || c.startPeriod < 1) c.startPeriod = 1; if (isNaN(c.endPeriod) || c.endPeriod > 15) c.endPeriod = 3; if (isNaN(c.day) || !c.day) c.day = 2;
+                if (isNaN(c.startPeriod) || c.startPeriod < 1) c.startPeriod = 1;
+                if (isNaN(c.endPeriod) || c.endPeriod > 15) c.endPeriod = 3;
+                if (isNaN(c.day) || !c.day) c.day = 2;
                 let existing = cleanedCourses.find(ex => (ex.name === c.name || (c.code && ex.code === c.code)) && ex.day === c.day && ex.startPeriod === c.startPeriod);
                 if (existing) {
                     if (c.activeDates && c.activeDates.length > 0) {
@@ -818,12 +834,15 @@
 
         function switchView(viewId, navElement) {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active'); document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             if(navElement) navElement.classList.add('active');
             document.getElementById('btn-add-course').style.display = (viewId === 'view-timetable') ? 'inline-flex' : 'none';
             const titles = { 'view-timetable': 'Thời khóa biểu', 'view-sheet': 'Kế hoạch Đại học', 'view-dashboard': 'Tổng quan Dashboard', 'view-pomodoro': 'Phòng tập trung Pomodoro', 'view-profile': 'Hồ sơ cá nhân', 'view-roadmap': 'Các mục tiêu' };
             document.getElementById('view-title').textContent = titles[viewId] || 'Horizon';
-            if(viewId === 'view-dashboard') renderDashboard(); if(viewId === 'view-roadmap') renderRoadmap(); if(viewId === 'view-profile') renderProfile(); 
+            if(viewId === 'view-dashboard') renderDashboard();
+            if(viewId === 'view-roadmap') renderRoadmap();
+            if(viewId === 'view-profile') renderProfile(); 
         }
 
         function calculateCurrentCredits() { let total = 0; state.courses.forEach(c => { total += parseInt(c.credits) || 0; }); return { total: total, uniqueCount: state.courses.length }; }
@@ -835,6 +854,7 @@
             document.getElementById('prof-inp-major').value = state.profile.major || ''; document.getElementById('prof-inp-email').value = state.profile.email || ''; document.getElementById('prof-inp-credits').value = state.profile.pastCredits || 0;
             document.querySelectorAll('.profile-form input').forEach(inp => { inp.disabled = true; });
             const btn = document.getElementById('btn-edit-profile'); if(btn) { btn.innerHTML = "✏️ Chỉnh sửa"; btn.classList.remove('btn-success'); btn.classList.add('btn-primary'); }
+            
             document.getElementById('prof-display-name').textContent = name;
             let displayMajor = state.profile.role || ''; if(state.profile.major) displayMajor += (displayMajor ? ' | ' : '') + state.profile.major;
             document.getElementById('prof-display-major').textContent = displayMajor || 'Sinh viên'; document.getElementById('prof-display-avatar').textContent = firstChar;
@@ -862,7 +882,8 @@
             for(let d=2; d<=7; d++) { if(dayCount[d] > maxVal) { maxVal = dayCount[d]; maxDay = d; } }
             if(state.courses.length > 0) { document.getElementById('dash-busiest-day').textContent = `Thứ ${maxDay}`; document.getElementById('dash-busiest-day').nextElementSibling.textContent = `Khoảng ${Math.round(maxVal)} tiết / tuần`;
             } else { document.getElementById('dash-busiest-day').textContent = `Trống`; }
-            const chartDiv = document.getElementById('dash-bar-chart'); chartDiv.innerHTML = ''; let chartMax = Math.max(...Object.values(dayCount), 10); 
+            const chartDiv = document.getElementById('dash-bar-chart'); chartDiv.innerHTML = '';
+            let chartMax = Math.max(...Object.values(dayCount), 10); 
             for(let d=2; d<=7; d++) { const val = dayCount[d]; const heightPercent = (val / chartMax) * 100; chartDiv.innerHTML += `<div class="bar-col"><div class="bar-fill" style="height: ${heightPercent}%;"></div><div class="bar-label">T${d}</div></div>`; }
         }
 
@@ -913,12 +934,17 @@
 
         function renderGrid() {
             const week = getWeekRange(currentWeekOffset); document.getElementById('weekLabel').textContent = week.label; const grid = document.getElementById('timetableGrid');
-            grid.innerHTML = `<div class="grid-header" style="z-index: 30; left: 0;">Thời gian \\ Thứ</div>` + 
+            
+            // Xóa Toàn bộ Đổ Bóng (Box-shadow) và Lớp màng che lệch
+            grid.innerHTML = `<div class="grid-header">Thời gian \\ Thứ</div>` + 
                              [2,3,4,5,6,7].map(d => `<div class="grid-header">Thứ ${d}</div>`).join('');
             
             periods.forEach((p, idx) => {
                 const timeParts = p.time.split(' - ');
-                grid.innerHTML += `<div class="grid-time" style="grid-row: ${idx+2}; grid-column: 1;"><strong style="font-size: 0.85rem; color: var(--text);">${timeParts[0]}</strong><span style="font-size: 0.7rem; color: var(--text-muted);">${timeParts[1]}</span></div>`;
+                grid.innerHTML += `<div class="grid-time" style="grid-row: ${idx+2}; grid-column: 1;">
+                    <strong style="color: var(--text);">${timeParts[0]}</strong>
+                    <span>${timeParts[1]}</span>
+                </div>`;
                 for (let d = 2; d <= 7; d++) { grid.innerHTML += `<div class="grid-cell" style="grid-row: ${idx+2}; grid-column: ${d};" ondragover="event.preventDefault()" ondragenter="this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleDrop(event, ${d}, ${p.p})"></div>`; }
             });
 
@@ -934,7 +960,7 @@
                 const startTimeStr = periods[start-1].time.split(' - ')[0]; const endTimeStr = periods[end-1].time.split(' - ')[1];
 
                 const card = document.createElement('div'); card.className = `course-card`;
-                card.style.cssText = `grid-row: ${start + 1} / span ${end - start + 1}; grid-column: ${c.day}; background-color: ${c.color || COLORS[0]};`;
+                card.style.cssText = `grid-row: ${start + 1} / span ${end - start + 1}; grid-column: ${c.day}; background-color: ${c.color || COLORS[0]}; z-index: 5;`;
                 card.draggable = true; card.ondragstart = (e) => { e.dataTransfer.setData('text/plain', c.id); }; card.onclick = () => openCourseModal(c.id);
 
                 card.innerHTML = `
@@ -1236,7 +1262,7 @@
             else showToast(`Không tìm thấy sự kiện hợp lệ.`);
         }
 
-        // --- POMODORO CHỐNG CHẶN TRÌNH DUYỆT ---
+        // --- POMODORO ---
         let pomoTime = 25 * 60; let pomoInterval = null; let isPomoRunning = false; let currentPomoMode = 'focus';
         
         function updatePomoDisplay() {
@@ -1274,9 +1300,7 @@
                     btn.textContent = "Tạm dừng";
                 }
                 isPomoRunning = !isPomoRunning;
-            } catch (err) {
-                console.error("Lỗi Pomodoro:", err);
-            }
+            } catch (err) { console.error("Lỗi Pomodoro:", err); }
         }
         
         function resetPomo() { clearInterval(pomoInterval); isPomoRunning = false; document.getElementById('pomo-main-btn').textContent = "Bắt đầu"; const activeBtn = document.querySelector('.pomo-mode-btn.active'); if(activeBtn) activeBtn.click(); else setPomoMode(25, null, 'focus'); }
@@ -1295,9 +1319,9 @@
                 }
                 
                 const now = ctx.currentTime;
-                playTone(880, now, 0.4);             // Ding 1
-                playTone(1046.50, now + 0.25, 0.4);  // Ding 2 
-                playTone(1318.51, now + 0.5, 1.0);   // Ding 3 (Ngân)
+                playTone(880, now, 0.4);             
+                playTone(1046.50, now + 0.25, 0.4);  
+                playTone(1318.51, now + 0.5, 1.0);   
             } catch(e) { console.log("Trình duyệt không hỗ trợ AudioContext"); } 
         }
 
