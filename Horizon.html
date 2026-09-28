@@ -1,0 +1,1588 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horizon</title>
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦉</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FIREBASE SDKS -->
+    <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.4.0/firebase-database-compat.js"></script>
+
+    <style>
+        :root {
+            --bg: #090f1b; 
+            --panel: #111827; 
+            --panel-light: #1f2937;
+            --border: rgba(255, 255, 255, 0.08); 
+            --cell-bg: #0d1322; 
+            --cell-border: rgba(255, 255, 255, 0.04);
+            --text: #f8fafc; 
+            --text-muted: #94a3b8; 
+            --primary: #38bdf8; 
+            --primary-hover: #0284c7;
+            --danger: #f43f5e; 
+            --success: #10b981; 
+            --warning: #f59e0b;
+            --radius-sm: 8px; 
+            --radius-md: 12px; 
+            --shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.25);
+        }
+        .light-mode {
+            --bg: #f3f4f6; 
+            --panel: #ffffff; 
+            --panel-light: #f8fafc;
+            --border: #e2e8f0; 
+            --cell-bg: #fafafa; 
+            --cell-border: #f1f5f9;
+            --text: #0f172a; 
+            --text-muted: #64748b; 
+            --primary: #0ea5e9; 
+            --primary-hover: #0284c7;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
+        body { background-color: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: row; overflow: hidden; transition: background-color 0.3s; }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--panel-light); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        /* Left Taskbar */
+        .left-nav { width: 260px; background-color: var(--panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 24px 16px; z-index: 30; flex-shrink: 0; box-shadow: 2px 0 15px rgba(0,0,0,0.1); }
+        .brand { font-size: 1.4rem; font-weight: 800; color: var(--primary); margin-bottom: 24px; padding: 0 12px; display: flex; align-items: center; gap: 8px; letter-spacing: -0.5px; }
+        
+        .launchpad { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 24px; padding: 0 8px; }
+        .launch-btn { background: var(--panel-light); border: 1px solid var(--border); border-radius: 8px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--text); text-decoration: none; transition: 0.2s; }
+        .launch-btn:hover { background: var(--primary); color: #fff; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(56, 189, 248, 0.2); }
+
+        .nav-item { padding: 12px 16px; margin-bottom: 8px; border-radius: var(--radius-sm); color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 0.95rem; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.2s ease; }
+        .nav-item:hover { background-color: rgba(255,255,255,0.05); color: var(--text); }
+        .nav-item.active { background-color: var(--primary); color: #fff; box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3); }
+        
+        .user-profile-mini { margin-top: auto; padding: 12px; background: var(--panel-light); border-radius: var(--radius-sm); display: flex; align-items: center; gap: 12px; border: 1px solid var(--border); transition: 0.2s; cursor: pointer; }
+        .user-profile-mini:hover { border-color: var(--primary); }
+        .avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), #818cf8); display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; flex-shrink: 0; text-transform: uppercase; }
+        .user-info-mini { overflow: hidden; }
+        .user-info-mini h4 { font-size: 0.85rem; margin: 0; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .user-info-mini p { font-size: 0.7rem; color: var(--text-muted); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* Main App Area */
+        .app-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 16px 28px; background-color: var(--panel); border-bottom: 1px solid var(--border); z-index: 20; box-shadow: 0 1px 10px rgba(0,0,0,0.1); }
+        .header-left { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .header-left h1 { font-size: 1.25rem; font-weight: 700; margin: 0; letter-spacing: -0.5px; color: var(--text); }
+        .plan-name { color: var(--primary); cursor: pointer; padding: 4px 10px; border-radius: var(--radius-sm); font-weight: 600; background-color: rgba(56, 189, 248, 0.1); transition: 0.2s; font-size: 0.9rem; border: 1px solid rgba(56, 189, 248, 0.2); }
+        .plan-name:hover { background-color: rgba(56, 189, 248, 0.2); }
+        
+        .header-right { display: flex; align-items: center; gap: 14px; }
+        
+        .btn { background-color: var(--panel-light); color: var(--text); border: 1px solid var(--border); padding: 8px 16px; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.85rem; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s ease; text-decoration: none;}
+        .btn:hover { background-color: rgba(255,255,255,0.05); transform: translateY(-1px); color: var(--text);}
+        .btn-primary { background-color: var(--primary); color: #fff; border: none; }
+        .btn-primary:hover { background-color: var(--primary-hover); color: #fff;}
+        .btn-success { background-color: var(--success); color: #fff; border: none; }
+        .btn-full { width: 100%; margin-bottom: 10px; }
+        .icon-btn { background: var(--panel-light); border: 1px solid var(--border); color: var(--text); cursor: pointer; padding: 8px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .icon-btn:hover { background-color: rgba(255,255,255,0.05); transform: translateY(-1px); }
+
+        .view-section { display: none; flex: 1; overflow: hidden; }
+        .view-section.active { display: flex; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Timetable View */
+        #view-timetable { flex-direction: row; }
+        .main-container { display: flex; flex: 1; overflow: hidden; width: 100%; }
+        .timetable-wrapper { flex: 1; overflow: auto; padding: 16px 24px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+        .sidebar { width: 340px; background-color: var(--panel); border-right: 1px solid var(--border); border-left: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; box-shadow: -4px 0 20px rgba(0,0,0,0.1); z-index: 10; }
+        
+        .timetable-toolbar { display: flex; justify-content: center; align-items: center; padding: 12px 24px; gap: 16px; width: 100%; max-width: 1250px; background: var(--panel); border-radius: var(--radius-md); border: 1px solid var(--border); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .week-label { font-size: 1rem; font-weight: 600; min-width: 220px; text-align: center; color: var(--primary); letter-spacing: -0.3px; }
+
+        .timetable { display: grid; grid-template-columns: 95px repeat(6, minmax(150px, 1fr)); grid-template-rows: 44px repeat(15, minmax(80px, 1fr)); gap: 8px; width: 100%; max-width: 1300px; height: fit-content; padding-bottom: 80px; }
+        .grid-header { background-color: var(--panel-light); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.9rem; color: var(--text-muted); box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid var(--border); }
+        .grid-time { display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.75rem; color: var(--text-muted); background: rgba(255,255,255,0.02); border-radius: var(--radius-sm); border: 1px dashed var(--border);}
+        .grid-time strong { font-size: 0.85rem; color: var(--text); font-weight: 700; margin-bottom: 2px; }
+        .grid-cell { background-color: var(--cell-bg); border: 1px dashed var(--cell-border); border-radius: var(--radius-sm); transition: 0.2s; }
+        .grid-cell.drag-over { background-color: rgba(56, 189, 248, 0.1); border: 2px dashed var(--primary); }
+
+        .course-card { border-radius: var(--radius-md); padding: 12px; font-size: 0.8rem; color: #ffffff; cursor: pointer; overflow: hidden; display: flex; flex-direction: column; z-index: 10; box-shadow: var(--shadow); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid rgba(255, 255, 255, 0.2); position: relative; width: 100%; }
+        .course-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 100%; background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 100%); pointer-events: none; }
+        .course-card:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 10px 25px rgba(0,0,0,0.5); filter: brightness(1.1); z-index: 15; }
+
+        .sidebar-section { padding: 20px; border-bottom: 1px solid var(--border); }
+        .sidebar-section h3 { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 14px; letter-spacing: 0.5px; font-weight: 700; }
+        .today-banner { font-size: 1.1rem; font-weight: 800; color: var(--primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .today-item { background: var(--panel-light); border-left: 4px solid var(--primary); padding: 10px 14px; border-radius: var(--radius-sm); margin-bottom: 10px; font-size: 0.85rem; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
+        /* SINGLE LIST TASK MANAGER */
+        .task-list { flex: 1; display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; overflow-y: auto; padding-right: 4px; min-height: 150px; }
+        .task-item { display: flex; align-items: flex-start; gap: 12px; background: var(--panel-light); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); transition: 0.2s; }
+        .task-item:hover { border-color: var(--primary); }
+        .task-item.pri-high { border-left: 3px solid var(--danger); }
+        .task-item.pri-med { border-left: 3px solid var(--warning); }
+        .task-item.pri-low { border-left: 3px solid var(--primary); }
+        .task-item.done { opacity: 0.45; background: transparent; border-color: var(--border);}
+        
+        .task-checkbox-wrapper { position: relative; display: inline-block; width: 22px; height: 22px; flex-shrink: 0; cursor: pointer; }
+        .task-checkbox-wrapper input { opacity: 0; width: 0; height: 0; position: absolute; }
+        .task-checkmark { position: absolute; top: 0; left: 0; width: 22px; height: 22px; background-color: transparent; border: 2px solid var(--text-muted); border-radius: 6px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+        .task-checkbox-wrapper:hover .task-checkmark { border-color: var(--primary); }
+        .task-checkbox-wrapper input:checked ~ .task-checkmark { background-color: var(--success); border-color: var(--success); }
+        .task-checkmark::after { content: "✓"; color: white; font-size: 14px; font-weight: 800; opacity: 0; transform: scale(0.5); transition: all 0.2s; }
+        .task-checkbox-wrapper input:checked ~ .task-checkmark::after { opacity: 1; transform: scale(1); }
+
+        .task-content { flex: 1; display: flex; flex-direction: column; gap: 5px; overflow: hidden; }
+        .task-text { font-size: 0.85rem; font-weight: 600; color: var(--text); line-height: 1.3; word-wrap: break-word; }
+        .task-meta { font-size: 0.7rem; color: var(--text-muted); display: flex; gap: 8px; flex-wrap: wrap;}
+        .task-badge { font-size: 0.65rem; padding: 3px 6px; border-radius: 4px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; width: fit-content;}
+        .badge-time { color: var(--primary); background: rgba(56, 189, 248, 0.1); }
+        .badge-repeat { color: var(--warning); background: rgba(245, 158, 11, 0.1); }
+        
+        .add-task-form { display: flex; flex-direction: column; gap: 10px; background: var(--panel-light); padding: 14px; border-radius: var(--radius-sm); border: 1px dashed var(--border); }
+        
+        /* CHUẨN MÀU INPUTS THEO DARK MODE */
+        input, select, textarea {
+            width: 100%; padding: 10px 12px; 
+            background-color: var(--cell-bg); 
+            color: var(--text); 
+            border: 1px solid var(--border); 
+            border-radius: var(--radius-sm); outline: none; font-size: 0.85rem; transition: 0.2s;
+            color-scheme: dark; 
+        }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.15); }
+        input:disabled { opacity: 0.6; cursor: not-allowed; background-color: var(--panel) !important; border-color: transparent !important; }
+
+        /* MỤC TIÊU / ROADMAP VIEW */
+        #view-roadmap { padding: 32px; overflow-y: auto; flex-direction: column; background: var(--bg); }
+        .roadmap-header { margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-end; }
+        .roadmap-progress { background: var(--panel-light); padding: 20px; border-radius: var(--radius-md); border: 1px solid var(--border); margin-bottom: 16px; box-shadow: var(--shadow); }
+        .roadmap-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+        
+        .goal-card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px; transition: 0.2s; position: relative; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; flex-direction: column;}
+        .goal-card:hover { border-color: var(--primary); box-shadow: 0 4px 15px rgba(0,0,0,0.2); transform: translateY(-2px);}
+        .goal-card.status-done { opacity: 0.65; border-color: var(--success); }
+        .goal-card.status-done::after { content: ''; position: absolute; top:0; left:0; width:4px; height:100%; background: var(--success); }
+        .goal-card.status-doing::after { content: ''; position: absolute; top:0; left:0; width:4px; height:100%; background: var(--primary); }
+        .goal-card.status-todo::after { content: ''; position: absolute; top:0; left:0; width:4px; height:100%; background: var(--text-muted); }
+
+        .goal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .goal-cat { font-size: 0.7rem; font-weight: 700; padding: 4px 8px; border-radius: 4px; text-transform: uppercase;}
+        .cat-prog { background: rgba(56, 189, 248, 0.1); color: var(--primary); }
+        .cat-lang { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+        .cat-career { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+        
+        .goal-pri-high { color: var(--danger); font-size: 0.7rem; font-weight: 700; background: rgba(244, 63, 94, 0.1); padding: 2px 6px; border-radius: 4px; }
+        .goal-pri-med { color: var(--warning); font-size: 0.7rem; font-weight: 700; background: rgba(245, 158, 11, 0.1); padding: 2px 6px; border-radius: 4px; }
+        .goal-pri-low { color: var(--primary); font-size: 0.7rem; font-weight: 700; background: rgba(56, 189, 248, 0.1); padding: 2px 6px; border-radius: 4px; }
+
+        .goal-title { font-size: 1.05rem; font-weight: 600; color: var(--text); margin-bottom: 8px; line-height: 1.4; }
+        .goal-meta { font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px; margin-bottom: 12px;}
+        
+        .goal-sub-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; background: var(--cell-bg); padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border);}
+        .goal-sub-item { display: flex; align-items: flex-start; gap: 8px; font-size: 0.8rem; color: var(--text);}
+        .goal-sub-item input { width: 14px; height: 14px; margin-top: 2px; accent-color: var(--primary); cursor: pointer; flex-shrink: 0; padding: 0;}
+        .goal-sub-item span { line-height: 1.4; }
+        
+        .goal-progress-mini { height: 4px; background: var(--cell-bg); border-radius: 2px; overflow: hidden; margin-bottom: 12px; }
+        .goal-progress-mini-fill { height: 100%; background: var(--primary); transition: width 0.3s; }
+
+        .goal-actions { margin-top: auto; display: flex; gap: 6px; }
+        .status-btn { flex: 1; padding: 6px; font-size: 0.75rem; font-weight: 600; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--panel-light); color: var(--text-muted); cursor: pointer; transition: 0.2s; }
+        .status-btn:hover { background: var(--cell-bg); color: var(--text); }
+        .status-btn.active.s-todo { border-color: var(--text-muted); color: var(--text); background: rgba(255,255,255,0.05); }
+        .status-btn.active.s-doing { border-color: var(--primary); color: var(--primary); background: rgba(56, 189, 248, 0.1); }
+        .status-btn.active.s-done { border-color: var(--success); color: var(--success); background: rgba(16, 185, 129, 0.1); }
+
+        .add-goal-box { background: var(--panel); padding: 20px; border-radius: var(--radius-md); border: 1px dashed var(--border); margin-bottom: 24px; }
+        .add-goal-form { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
+        .add-goal-row { display: flex; gap: 12px; flex-wrap: wrap;}
+        
+        .kanban-tabs { display: flex; background: var(--cell-bg); padding: 4px; border-radius: var(--radius-sm); margin-bottom: 16px; border: 1px solid var(--border); }
+        .k-tab { flex: 1; text-align: center; padding: 6px 0; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); cursor: pointer; border-radius: 4px; transition: 0.2s; }
+        .k-tab.active { background: var(--panel-light); color: var(--primary); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+
+        /* DASHBOARD */
+        #view-dashboard { flex-direction: column; overflow-y: auto; padding: 24px 32px; gap: 24px; background: var(--bg); }
+        .dash-header h2 { font-size: 1.8rem; margin-bottom: 4px; color: var(--text); letter-spacing: -0.5px; }
+        .dash-header p { color: var(--text-muted); font-size: 0.9rem; }
+        .dash-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+        .stat-card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .stat-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; margin-bottom: 8px; }
+        .stat-title { font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+        .stat-value { font-size: 2rem; font-weight: 800; color: var(--text); }
+        .stat-desc { font-size: 0.75rem; color: var(--success); display: flex; align-items: center; gap: 4px; }
+        .dash-charts { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-top: 8px; }
+        .chart-box { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+        .bar-chart { display: flex; align-items: flex-end; gap: 12px; height: 180px; padding-top: 20px; border-bottom: 1px solid var(--border); }
+        .bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 8px; height: 100%; }
+        .bar-fill { width: 100%; background: var(--primary); border-radius: 4px 4px 0 0; transition: height 0.5s ease; position: relative; }
+        .bar-label { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
+        .progress-bar { height: 12px; background: var(--panel-light); border-radius: 6px; overflow: hidden; margin: 8px 0; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), #818cf8); width: 40%; border-radius: 6px; transition: width 0.5s;}
+        .progress-text { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); }
+
+        /* VIEW GOOGLE SHEET NHÚNG */
+        #view-sheet { flex-direction: column; background: var(--bg); overflow: hidden;}
+        .sheet-container { flex: 1; padding: 16px 24px; padding-bottom: 24px; display: flex; flex-direction: column; }
+        .sheet-iframe { width: 100%; height: 100%; border: 1px solid var(--border); border-radius: var(--radius-md); box-shadow: var(--shadow); background: #ffffff; }
+
+        /* POMODORO */
+        #view-pomodoro { flex-direction: column; align-items: center; justify-content: center; padding: 40px; background: var(--bg);}
+        .pomo-card { background: var(--panel); border: 1px solid var(--border); border-radius: 24px; padding: 48px; display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 500px; box-shadow: var(--shadow); }
+        .pomo-modes { display: flex; gap: 12px; background: var(--cell-bg); padding: 6px; border-radius: 30px; border: 1px solid var(--border); margin-bottom: 32px; flex-wrap: wrap; justify-content: center;}
+        .pomo-mode-btn { padding: 8px 18px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--text-muted); border: none; background: transparent; transition: 0.2s; }
+        .pomo-mode-btn.active { background: var(--primary); color: #fff; }
+        .pomo-clock-circle { width: 240px; height: 240px; border-radius: 50%; border: 6px solid var(--primary); display: flex; align-items: center; justify-content: center; margin-bottom: 32px; box-shadow: 0 0 30px rgba(56, 189, 248, 0.2); }
+        .pomo-big-time { font-size: 3.5rem; font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
+        .pomo-actions { display: flex; gap: 16px; align-items: center; }
+        .pomo-main-btn { padding: 12px 36px; font-size: 1.1rem; border-radius: 30px; }
+
+        /* PROFILE VIEW */
+        #view-profile { padding: 32px; overflow-y: auto; flex-direction: column; align-items: center; background: var(--bg);}
+        .profile-card { background: var(--panel); width: 100%; max-width: 650px; border-radius: 16px; border: 1px solid var(--border); padding: 32px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+        .profile-header-info { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; border-bottom: 1px solid var(--border); padding-bottom: 24px; }
+        .profile-user-left { display: flex; align-items: center; gap: 24px; }
+        .profile-avatar-large { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), #818cf8); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; color: white; font-weight: bold; flex-shrink: 0; text-transform: uppercase; box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3); }
+        .profile-form .form-group { margin-bottom: 16px; }
+        .profile-form label { display: block; margin-bottom: 6px; font-size: 0.85rem; color: var(--text-muted); font-weight: 600;}
+
+        /* GPA MODAL TABLE */
+        .gpa-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .gpa-table th, .gpa-table td { padding: 8px; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+        .gpa-table th { color: var(--text-muted); font-weight: 600; background: var(--panel); position: sticky; top: 0; }
+        .gpa-table input { width: 100%; padding: 6px; font-size: 0.85rem; background: var(--panel); border: 1px solid var(--border); color: var(--text); border-radius: 4px; outline: none; transition: 0.2s;}
+        .gpa-table input:focus { border-color: var(--primary); }
+        .gpa-row-add { margin-top: 10px; display: inline-block; cursor: pointer; color: var(--primary); font-size: 0.85rem; font-weight: 600; }
+        .gpa-results { background: var(--panel-light); padding: 16px; border-radius: var(--radius-sm); margin-top: 20px; display: flex; justify-content: space-between; border: 1px solid var(--primary); }
+        .gpa-box { text-align: center; }
+        .gpa-box p { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; }
+        .gpa-box h3 { font-size: 1.5rem; color: var(--primary); }
+
+        /* Modals Generic */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.65); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; z-index: 100; opacity: 0; pointer-events: none; transition: 0.2s ease; }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal { background: var(--panel); width: 100%; max-width: 600px; border-radius: 16px; border: 1px solid var(--border); overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); transform: scale(0.95); transition: 0.2s ease;}
+        .modal-overlay.active .modal { transform: scale(1); }
+        .modal-header { padding: 18px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02);}
+        .modal-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; max-height: 75vh; overflow-y: auto; }
+        .modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; background: rgba(255,255,255,0.02);}
+        .form-row { display: flex; gap: 16px; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+        
+        .date-input-wrapper { position: relative; display: flex; align-items: center; width: 100%; }
+        .date-input-wrapper input[type="text"] { width: 100%; padding-right: 32px; }
+        .date-input-wrapper input[type="date"] { position: absolute; right: 4px; opacity: 0; width: 24px; cursor: pointer; height: 100%; }
+        .date-input-wrapper span { position: absolute; right: 10px; pointer-events: none; font-size: 1.1rem; }
+
+        .color-list { display: flex; gap: 12px; flex-wrap: wrap; flex: 1; }
+        .color-circle { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid rgba(255,255,255,0.2); transition: 0.2s; }
+        .color-circle.selected { transform: scale(1.15); border-color: #fff; box-shadow: 0 0 0 4px var(--primary); }
+        
+        .toast-container { position: fixed; bottom: 24px; right: 24px; display: flex; flex-direction: column; gap: 10px; z-index: 1000; }
+        .toast { background: var(--panel); border-left: 4px solid var(--success); color: var(--text); padding: 14px 20px; border-radius: var(--radius-sm); font-size: 0.9rem; font-weight: 500; box-shadow: 0 10px 25px rgba(0,0,0,0.3); animation: slideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; border: 1px solid var(--border);}
+        @keyframes slideIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        /* Sync Icon */
+        .sync-icon { font-size: 1.2rem; cursor: pointer; transition: 0.2s; user-select: none; }
+        .sync-icon.syncing { animation: spin 1s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <!-- === LEFT TASKBAR === -->
+    <nav class="left-nav">
+        <div class="brand"><span>🎓</span> Horizon</div>
+        
+        <div class="launchpad">
+            <a href="https://portal.uit.edu.vn/" target="_blank" class="launch-btn" title="Portal UIT">🏫</a>
+            <a href="https://github.com" target="_blank" class="launch-btn" title="GitHub">🐙</a>
+            <a href="https://leetcode.com" target="_blank" class="launch-btn" title="LeetCode">💻</a>
+            <a href="https://chatgpt.com" target="_blank" class="launch-btn" title="ChatGPT">🤖</a>
+        </div>
+
+        <a class="nav-item active" id="nav-timetable" onclick="switchView('view-timetable', this)"><span>📅</span> Thời khóa biểu</a>
+        <a class="nav-item" id="nav-sheet" onclick="switchView('view-sheet', this)"><span>📑</span> Kế hoạch Đại học</a>
+        <a class="nav-item" id="nav-dashboard" onclick="switchView('view-dashboard', this)"><span>📊</span> Dashboard</a>
+        <a class="nav-item" id="nav-roadmap" onclick="switchView('view-roadmap', this)"><span>🎯</span> Các mục tiêu</a>
+        
+        <a class="nav-item" id="nav-pomodoro" onclick="switchView('view-pomodoro', this)"><span>⏱️</span> Tập trung (Pomodoro)</a>
+        <a class="nav-item" id="nav-profile" onclick="switchView('view-profile', this)"><span>👤</span> Thông tin cá nhân</a>
+        <a class="nav-item" onclick="toggleTheme()" style="margin-top: 8px;"><span id="theme-icon">🌓</span> Giao diện</a>
+        
+        <div class="user-profile-mini" onclick="switchView('view-profile', document.getElementById('nav-profile'))">
+            <div class="avatar" id="mini-prof-avatar">V</div>
+            <div class="user-info-mini">
+                <h4 id="mini-prof-name">User</h4>
+                <p id="mini-prof-role">Sinh viên</p>
+            </div>
+        </div>
+    </nav>
+
+    <!-- === MAIN CONTENT === -->
+    <div class="app-main">
+        <header>
+            <div class="header-left">
+                <h1 id="view-title">Thời khóa biểu</h1>
+                <span class="plan-name" id="currentPlanName" onclick="renamePlan()">Học kỳ mới</span>
+                <span class="plan-name" style="background-color: rgba(16, 185, 129, 0.15); color: var(--success); cursor: default; border-color: transparent;" title="Số tín chỉ học kỳ này">
+                    <span id="header-current-credits">0</span> Tín chỉ
+                </span>
+            </div>
+            <div class="header-right">
+                <span id="cloud-sync-icon" class="sync-icon" title="Trạng thái đồng bộ Cloud" onclick="manualSync()">☁️</span>
+                <button class="btn btn-success" onclick="openGPAModal()">🎯 Tính điểm GPA</button>
+                <button class="btn btn-primary" id="btn-add-course" onclick="openCourseModal()"><span style="font-size: 1.2rem; line-height: 0;">+</span> Thêm sự kiện</button>
+                <button class="btn" onclick="openDataModal()">⚙️ Dữ liệu</button>
+            </div>
+        </header>
+
+        <!-- VIEW 1: THỜI KHÓA BIỂU -->
+        <div id="view-timetable" class="view-section active">
+            <div class="main-container">
+                <div class="timetable-wrapper">
+                    <div class="timetable-toolbar">
+                        <button class="btn" onclick="changeWeek(-1)" style="padding: 8px 16px;">❮ Tuần trước</button>
+                        <div class="week-label" id="weekLabel">Tuần này</div>
+                        <button class="btn" onclick="changeWeek(1)" style="padding: 8px 16px;">Tuần sau ❯</button>
+                        <button class="btn btn-primary" onclick="resetWeek()">Về hiện tại</button>
+                    </div>
+                    <div class="timetable" id="timetableGrid"></div>
+                </div>
+
+                <aside class="sidebar">
+                    <div class="sidebar-section">
+                        <div class="today-banner" id="todayDateStr">Hôm nay</div>
+                        <div id="todayClasses"></div>
+                    </div>
+                    
+                    <div class="sidebar-section" style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
+                        <h3>✓ QUẢN LÝ NHIỆM VỤ</h3>
+                        <div class="task-list" id="taskList"></div>
+                        
+                        <div class="add-task-form">
+                            <input type="text" id="kTaskName" placeholder="Tên nhiệm vụ..." onkeypress="if(event.key === 'Enter') addKanbanTask()">
+                            <select id="kTaskType" style="margin-bottom: 8px;" onchange="toggleTaskType()">
+                                <option value="upcoming">⚡ Sự kiện sắp tới (Chỉ cần tên)</option>
+                                <option value="future">📅 Sự kiện trong tương lai (Có ngày giờ)</option>
+                            </select>
+
+                            <div id="kTaskFutureOptions" style="display: none; flex-direction: column; gap: 8px;">
+                                <div class="task-inputs-row" style="display: flex; gap: 8px;">
+                                    <input type="date" id="newTaskDate" title="Ngày" style="flex:1;">
+                                    <input type="time" id="newTaskTime" title="Giờ" style="flex:1;">
+                                </div>
+                                <select id="newTaskRecurrence">
+                                    <option value="once">Chỉ một lần</option>
+                                    <option value="daily">Lặp lại hằng ngày</option>
+                                    <option value="weekly">Lặp lại hằng tuần</option>
+                                </select>
+                            </div>
+                            
+                            <select id="kTaskPri" style="margin-top: 4px;">
+                                <option value="med">Ưu tiên: Vừa</option><option value="high">Ưu tiên: Cao</option><option value="low">Ưu tiên: Thấp</option>
+                            </select>
+                            <button class="btn btn-primary btn-full" style="padding: 8px 12px; margin-bottom: 0; margin-top: 8px;" onclick="addKanbanTask()">Thêm nhiệm vụ</button>
+                        </div>
+                    </div>
+                    
+                    <div class="sidebar-section" style="border-bottom: none;">
+                        <h3>📝 Ghi chú nhanh</h3>
+                        <textarea id="noteInput" placeholder="Note lại ý tưởng, kế hoạch ôn thi..." oninput="saveNote()"></textarea>
+                    </div>
+                </aside>
+            </div>
+        </div>
+
+        <!-- VIEW GOOGLE SHEET NHÚNG -->
+        <div id="view-sheet" class="view-section">
+            <div class="sheet-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <p style="color: var(--text-muted); font-size: 0.85rem;">*Bảng tính được nhúng trực tiếp. Nếu không thể chỉnh sửa, hãy dùng nút bên phải để mở tab mới.</p>
+                    <a href="https://docs.google.com/spreadsheets/d/1O0u4k0NVci0HnNVjb08i7k3GMvYP9Egh/edit?gid=1729671439#gid=1729671439" target="_blank" class="btn btn-primary">Mở Tab mới ↗</a>
+                </div>
+                <iframe class="sheet-iframe" src="https://docs.google.com/spreadsheets/d/1O0u4k0NVci0HnNVjb08i7k3GMvYP9Egh/edit?gid=1729671439#gid=1729671439"></iframe>
+            </div>
+        </div>
+
+        <!-- VIEW LỘ TRÌNH CÔNG NGHỆ -->
+        <div id="view-roadmap" class="view-section">
+            <div class="roadmap-header">
+                <div>
+                    <h2 style="font-size: 1.8rem; margin-bottom: 4px; color: var(--text); letter-spacing: -0.5px;">Lộ trình Phát triển & Mục tiêu</h2>
+                    <p style="color:var(--text-muted); margin-top:4px;">Theo dõi các mốc kiến thức, kỹ năng cần đạt được cho định hướng của bạn.</p>
+                </div>
+            </div>
+            
+            <div class="roadmap-progress">
+                <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:600; margin-bottom:8px;">
+                    <span>Tiến độ hoàn thành lộ trình tổng thể</span>
+                    <span id="roadmap-pct-text">0%</span>
+                </div>
+                <div class="progress-bar" style="margin:0; height: 8px;"><div class="progress-fill" id="roadmap-pct-bar" style="width: 0%;"></div></div>
+            </div>
+            
+            <div class="kanban-tabs" style="max-width: 600px; margin-bottom: 24px;">
+                <div class="k-tab active" onclick="filterGoals('all', this)">Tất cả</div>
+                <div class="k-tab" onclick="filterGoals('prog', this)">💻 Chuyên ngành</div>
+                <div class="k-tab" onclick="filterGoals('lang', this)">🗣️ Ngoại ngữ</div>
+                <div class="k-tab" onclick="filterGoals('career', this)">🚀 Sự nghiệp</div>
+            </div>
+
+            <div class="add-goal-box">
+                <h3 style="font-size:0.95rem; margin-bottom:12px; color: var(--text);">+ Thêm mục tiêu mới</h3>
+                <div class="add-goal-form">
+                    <input type="text" id="goalTitle" placeholder="Tên kỹ năng / Mục tiêu tổng quát (VD: Master C++ Pointers)..." style="font-weight: bold;">
+                    
+                    <div class="add-goal-row">
+                        <select id="goalCat" style="flex:1;">
+                            <option value="prog">💻 Lập trình / Chuyên ngành</option>
+                            <option value="lang">🗣️ Ngoại ngữ</option>
+                            <option value="career">🚀 Sự nghiệp / Khác</option>
+                        </select>
+                        <select id="goalPri" style="flex:1;">
+                            <option value="high">🔥 Ưu tiên: Cao (Sống còn)</option>
+                            <option value="med" selected>⭐ Ưu tiên: Vừa</option>
+                            <option value="low">💡 Ưu tiên: Thấp (Có thì tốt)</option>
+                        </select>
+                        <select id="goalDeadlineToggle" style="flex:1;" onchange="toggleGoalDate()">
+                            <option value="no">♾️ Không có deadline (Dài hạn)</option>
+                            <option value="yes">⏳ Có deadline</option>
+                        </select>
+                        <input type="date" id="goalDate" title="Deadline dự kiến" style="display:none; flex:1;">
+                    </div>
+                    
+                    <textarea id="goalSubtasks" placeholder="Chia nhỏ mục tiêu (Tùy chọn) - Mỗi dòng 1 gạch đầu dòng (VD: \n1. Học OOP\n2. Nắm vững Con trỏ\n3. Làm bài tập Array)"></textarea>
+                    
+                    <button class="btn btn-primary" style="margin-top: 8px; width: fit-content; padding: 10px 24px;" onclick="addGoal()">+ Khởi tạo lộ trình</button>
+                </div>
+            </div>
+
+            <div class="roadmap-grid" id="roadmapGrid"></div>
+        </div>
+
+        <!-- VIEW DASHBOARD -->
+        <div id="view-dashboard" class="view-section">
+            <div class="dash-header">
+                <h2>Xin chào, <span id="dash-greeting-name">User</span> 👋</h2>
+                <p>Tổng quan dữ liệu học tập và thời khóa biểu hiện tại của bạn.</p>
+            </div>
+            <div class="dash-stats-grid">
+                <div class="stat-card"><div class="stat-icon" style="background: rgba(56, 189, 248, 0.2); color: var(--primary);">📚</div><div class="stat-title">Tổng số sự kiện</div><div class="stat-value" id="dash-total-courses">0</div><div class="stat-desc">Đang lưu trên lịch trình</div></div>
+                <div class="stat-card"><div class="stat-icon" style="background: rgba(34, 197, 94, 0.2); color: var(--success);">🎯</div><div class="stat-title">Tổng tín chỉ</div><div class="stat-value" id="dash-total-credits">0</div><div class="stat-desc">Bao gồm các kỳ trước</div></div>
+                <div class="stat-card"><div class="stat-icon" style="background: rgba(245, 158, 11, 0.2); color: var(--warning);">⏱️</div><div class="stat-title">Khối lượng / Tuần</div><div class="stat-value" id="dash-total-periods">0</div><div class="stat-desc">Tổng số ca học trung bình</div></div>
+                <div class="stat-card"><div class="stat-icon" style="background: rgba(239, 68, 68, 0.2); color: var(--danger);">🔥</div><div class="stat-title">Ngày bận nhất</div><div class="stat-value" style="font-size: 1.5rem; margin-top:5px;" id="dash-busiest-day">Thứ -</div><div class="stat-desc">Cần tập trung năng lượng cao</div></div>
+            </div>
+            <div class="dash-charts">
+                <div class="chart-box"><h3>Phân bổ lịch trình trong tuần</h3><div class="bar-chart" id="dash-bar-chart"></div></div>
+                <div class="chart-box">
+                    <h3>Tiến độ Học kỳ</h3>
+                    <div class="progress-container">
+                        <div class="progress-text"><span>Tuần 6 / 15</span> <span>40%</span></div>
+                        <div class="progress-bar"><div class="progress-fill" style="width: 40%;"></div></div>
+                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 16px; line-height: 1.5;">Hãy sắp xếp thời gian ôn tập lý thuyết và hoàn thành bài tập nhé!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW POMODORO -->
+        <div id="view-pomodoro" class="view-section">
+            <div class="pomo-card">
+                <div class="pomo-modes">
+                    <button class="pomo-mode-btn active" onclick="setPomoMode(25, this, 'focus')">Tập trung (25p)</button>
+                    <button class="pomo-mode-btn" onclick="setPomoMode(45, this, 'focus')">Chuyên sâu (45p)</button>
+                    <button class="pomo-mode-btn" onclick="setPomoMode(60, this, 'focus')">Làm bài (60p)</button>
+                    <button class="pomo-mode-btn" onclick="setPomoMode(5, this, 'break')">Nghỉ ngắn (5p)</button>
+                    <button class="pomo-mode-btn" onclick="setPomoMode(15, this, 'break')">Nghỉ dài (15p)</button>
+                </div>
+                <div class="pomo-clock-circle">
+                    <div class="pomo-big-time" id="pomo-big-timer">25:00</div>
+                </div>
+                <div class="pomo-actions">
+                    <button class="btn btn-primary pomo-main-btn" id="pomo-main-btn" onclick="togglePomo()">Bắt đầu</button>
+                    <button class="btn" onclick="resetPomo()">Đặt lại</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW PROFILE -->
+        <div id="view-profile" class="view-section">
+            <div class="profile-card">
+                <div class="profile-header-info">
+                    <div class="profile-user-left">
+                        <div class="profile-avatar-large" id="prof-display-avatar">V</div>
+                        <div>
+                            <h2 style="font-size: 1.6rem; margin-bottom: 4px;" id="prof-display-name">User</h2>
+                            <p style="color: var(--text-muted);" id="prof-display-major">Sinh viên</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" id="btn-edit-profile" onclick="toggleProfileEdit()">✏️ Chỉnh sửa</button>
+                </div>
+                <div class="profile-form">
+                    <div class="form-row">
+                        <div class="form-group"><label>Họ và tên</label><input type="text" id="prof-inp-name" disabled></div>
+                        <div class="form-group"><label>Chức danh / Nghề nghiệp</label><input type="text" id="prof-inp-role" disabled></div>
+                    </div>
+                    <div class="form-group"><label>Chuyên ngành / Định hướng</label><input type="text" id="prof-inp-major" disabled></div>
+                    <div class="form-group"><label>Email liên hệ</label><input type="text" id="prof-inp-email" disabled></div>
+                    <div class="form-group"><label>Tín chỉ tích lũy (Các kỳ trước)</label><input type="number" id="prof-inp-credits" disabled placeholder="Ví dụ: 30" min="0"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL GPA -->
+    <div class="modal-overlay" id="gpaModalOverlay">
+        <div class="modal" style="max-width: 650px;">
+            <div class="modal-header">
+                <h2 style="font-size: 1.1rem;">Tính điểm GPA Tích lũy</h2>
+                <button class="icon-btn" style="padding: 4px 8px; border:none;" onclick="closeModal('gpaModalOverlay')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div style="overflow-x:auto;">
+                    <table class="gpa-table" id="gpaTable">
+                        <thead><tr><th>Tên Môn</th><th>Tín chỉ</th><th>QT (10)</th><th>GK (10)</th><th>CK (10)</th><th>% Cuối kỳ</th><th>Xóa</th></tr></thead>
+                        <tbody id="gpaTbody"></tbody>
+                    </table>
+                </div>
+                <div class="gpa-row-add" onclick="addGpaRow()">+ Thêm môn học vào bảng tính</div>
+                <div class="gpa-results">
+                    <div class="gpa-box"><p>Tổng Tín Chỉ</p><h3 id="res-credits">0</h3></div>
+                    <div class="gpa-box"><p>Trung bình (Hệ 10)</p><h3 id="res-gpa10">0.00</h3></div>
+                    <div class="gpa-box"><p>GPA (Hệ 4.0)</p><h3 id="res-gpa4" style="color:var(--success);">0.00</h3></div>
+                </div>
+            </div>
+            <div class="modal-footer"><button class="btn btn-primary" onclick="calcGPA()">Tính Toán</button></div>
+        </div>
+    </div>
+
+    <!-- MODAL QUẢN LÝ DỮ LIỆU -->
+    <div class="modal-overlay" id="dataModalOverlay">
+        <div class="modal" style="max-width: 420px;">
+            <div class="modal-header"><h2 style="font-size: 1.1rem;">Quản lý dữ liệu</h2><button class="icon-btn" style="padding: 4px 8px; border:none;" onclick="closeModal('dataModalOverlay')">✕</button></div>
+            <div class="modal-body" style="padding: 16px 24px;">
+                <textarea id="pasteDataInput" placeholder="Dán nội dung file JSON hoặc ICS vào đây (Ctrl+V)..." style="width: 100%; height: 100px; background: var(--cell-bg); border: 1px solid var(--border); color: var(--text); padding: 10px; border-radius: var(--radius-sm); outline: none; margin-bottom: 8px; font-size: 0.85rem; resize: none;"></textarea>
+                <button class="btn btn-primary btn-full" onclick="importFromPastedText()">Nhập từ văn bản vừa dán</button>
+                
+                <div style="display:flex; align-items:center; gap:10px; margin: 12px 0;">
+                    <div style="flex:1; height:1px; background:var(--border);"></div>
+                    <span style="font-size:0.75rem; color:var(--text-muted); font-weight:600;">HOẶC CHỌN FILE</span>
+                    <div style="flex:1; height:1px; background:var(--border);"></div>
+                </div>
+
+                <label class="btn btn-full" style="cursor:pointer; background:var(--panel-light); border: 1px solid var(--border);"><input type="file" accept=".json" onchange="importJSON(event)">📁 Tải lên File (.json)</label>
+                <label class="btn btn-full" style="cursor:pointer; background:var(--panel-light); border: 1px solid var(--border);"><input type="file" accept=".ics" onchange="importICS(event)">📅 Tải lên File (.ics)</label>
+                <button class="btn btn-full" style="border-color:var(--primary); color:var(--primary); margin-top: 4px;" onclick="exportJSON()">⬇️ Xuất dữ liệu (File .json)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL THÊM SỰ KIỆN -->
+    <div class="modal-overlay" id="courseModalOverlay">
+        <div class="modal">
+            <div class="modal-header"><h2 id="modalTitle" style="font-size:1.1rem;">Thêm/Sửa Lịch Trình</h2><button class="icon-btn" style="padding: 4px 8px; border:none;" onclick="closeModal('courseModalOverlay')">✕</button></div>
+            <div class="modal-body">
+                <input type="hidden" id="courseId">
+                <div class="form-row"><div class="form-group"><label>Mã sự kiện / Mã ký hiệu</label><input type="text" id="courseCode" placeholder="Ví dụ: IT003 (Hoặc bỏ trống)"></div><div class="form-group" style="flex:2;"><label>Tên sự kiện / Môn học *</label><input type="text" id="courseName" placeholder="VD: Đi làm trung tâm, Nhập môn CNTT"></div></div>
+                <div class="form-row"><div class="form-group"><label>Người quản lý / Giảng viên</label><input type="text" id="courseTeacher"></div><div class="form-group"><label>Địa điểm / Phòng học</label><input type="text" id="courseRoom"></div></div>
+                <div class="form-row"><div class="form-group"><label>Thứ</label><select id="courseDay"><option value="2">Thứ 2</option><option value="3">Thứ 3</option><option value="4">Thứ 4</option><option value="5">Thứ 5</option><option value="6">Thứ 6</option><option value="7">Thứ 7</option><option value="8">Chủ Nhật</option></select></div>
+                <div class="form-group"><label>Từ giờ</label><select id="courseStart">
+                    <option value="1">Ca 1 (07:30 - 08:15)</option><option value="2">Ca 2 (08:15 - 09:00)</option><option value="3">Ca 3 (09:00 - 09:45)</option>
+                    <option value="4">Ca 4 (10:00 - 10:45)</option><option value="5">Ca 5 (10:45 - 11:30)</option><option value="6">Ca 6 (13:00 - 13:45)</option>
+                    <option value="7">Ca 7 (13:45 - 14:30)</option><option value="8">Ca 8 (14:30 - 15:15)</option><option value="9">Ca 9 (15:30 - 16:15)</option>
+                    <option value="10">Ca 10 (16:15 - 17:00)</option><option value="11">Ca 11 (17:30 - 18:15)</option><option value="12">Ca 12 (18:15 - 19:00)</option>
+                    <option value="13">Ca 13 (19:30 - 20:15)</option><option value="14">Ca 14 (20:15 - 21:00)</option><option value="15">Ca 15 (21:00 - 21:45)</option>
+                </select></div>
+                <div class="form-group"><label>Đến giờ</label><select id="courseEnd">
+                    <option value="1">Ca 1 (07:30 - 08:15)</option><option value="2">Ca 2 (08:15 - 09:00)</option><option value="3">Ca 3 (09:00 - 09:45)</option>
+                    <option value="4">Ca 4 (10:00 - 10:45)</option><option value="5">Ca 5 (10:45 - 11:30)</option><option value="6">Ca 6 (13:00 - 13:45)</option>
+                    <option value="7">Ca 7 (13:45 - 14:30)</option><option value="8">Ca 8 (14:30 - 15:15)</option><option value="9">Ca 9 (15:30 - 16:15)</option>
+                    <option value="10">Ca 10 (16:15 - 17:00)</option><option value="11">Ca 11 (17:30 - 18:15)</option><option value="12">Ca 12 (18:15 - 19:00)</option>
+                    <option value="13">Ca 13 (19:30 - 20:15)</option><option value="14">Ca 14 (20:15 - 21:00)</option><option value="15">Ca 15 (21:00 - 21:45)</option>
+                </select></div></div>
+                <div class="form-row">
+                    <div class="form-group"><label>Ngày bắt đầu</label><div class="date-input-wrapper"><input type="text" id="courseStartDate" placeholder="DD/MM/YYYY" oninput="formatDateInput(this)"><input type="date" id="courseStartDatePicker" onchange="syncPickerToText(this, 'courseStartDate')"><span>📅</span></div></div>
+                    <div class="form-group"><label>Ngày kết thúc</label><div class="date-input-wrapper"><input type="text" id="courseEndDate" placeholder="DD/MM/YYYY" oninput="formatDateInput(this)"><input type="date" id="courseEndDatePicker" onchange="syncPickerToText(this, 'courseEndDate')"><span>📅</span></div></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>Chu kỳ</label><select id="courseInterval"><option value="1">Mỗi tuần</option><option value="2">Cách tuần</option></select></div>
+                    <div class="form-group"><label>Loại / Phân nhóm</label><select id="courseType"><option value="LT">Lý thuyết</option><option value="TH">Thực hành</option><option value="Work">Công việc</option><option value="">Khác</option></select></div>
+                    <div class="form-group"><label>Số Tín chỉ</label><input type="number" id="courseCredits" value="0" min="0"></div>
+                </div>
+                <div class="form-group"><label>Màu hiển thị</label><div class="color-list" id="colorPicker"></div></div>
+            </div>
+            
+            <!-- THÊM NÚT NHÂN BẢN SỰ KIỆN Ở ĐÂY -->
+            <div class="modal-footer">
+                <button class="btn" id="btnDelete" style="color:var(--danger); display:none; margin-right:auto;" onclick="deleteCourse()">Xóa sự kiện</button>
+                <button class="btn" id="btnDuplicate" style="color:var(--primary); display:none;" onclick="duplicateCourse()">Nhân bản (Copy)</button>
+                <button class="btn" onclick="closeModal('courseModalOverlay')">Hủy</button>
+                <button class="btn btn-primary" onclick="saveCourse()" style="padding: 8px 24px;">Lưu lại</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ==============================================
+         JAVASCRIPT & FIREBASE CLOUD SYNC LOGIC
+         ============================================== -->
+    <script>
+        // BƯỚC 1: DÁN CONFIG FIREBASE CỦA BẠN VÀO ĐÂY !!!
+        // Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyD0cyj78JfsmfXTJjsH6t0yIXKsPW3HBBA",
+  authDomain: "horizon-app-992d5.firebaseapp.com",
+  databaseURL: "https://horizon-app-992d5-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "horizon-app-992d5",
+  storageBucket: "horizon-app-992d5.firebasestorage.app",
+  messagingSenderId: "1013614959467",
+  appId: "1:1013614959467:web:3b453c5f5e3af199894a2e"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+        
+        // Khởi tạo Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        const DB_KEY = 'horizon_user_data_trieu'; // Tên thư mục trên cloud
+
+        // --- CẤU TRÚC APP ---
+        const STORAGE_KEY = 'tkb_desktop_app_data';
+        const COLORS = ['#9f1239', '#166534', '#075985', '#3730a3', '#5b21b6', '#9a3412', '#86198f', '#0f766e', '#1e3a8a', '#3f6212', '#831843', '#334155'];
+        const periods = [
+            { p: 1, time: '07:30 - 08:15', startMin: 450 }, { p: 2, time: '08:15 - 09:00', startMin: 495 },
+            { p: 3, time: '09:00 - 09:45', startMin: 540 }, { p: 4, time: '10:00 - 10:45', startMin: 600 },
+            { p: 5, time: '10:45 - 11:30', startMin: 645 }, { p: 6, time: '13:00 - 13:45', startMin: 780 },
+            { p: 7, time: '13:45 - 14:30', startMin: 825 }, { p: 8, time: '14:30 - 15:15', startMin: 870 },
+            { p: 9, time: '15:30 - 16:15', startMin: 930 }, { p: 10, time: '16:15 - 17:00', startMin: 975 },
+            { p: 11, time: '17:30 - 18:15', startMin: 1050 }, { p: 12, time: '18:15 - 19:00', startMin: 1095 },
+            { p: 13, time: '19:30 - 20:15', startMin: 1170 }, { p: 14, time: '20:15 - 21:00', startMin: 1215 },
+            { p: 15, time: '21:00 - 21:45', startMin: 1260 }
+        ];
+
+        let state = { 
+            theme: 'dark', planName: 'Học kỳ mới', courses: [], note: '', kanbanTasks: [], gpaData: [], goals: [],
+            profile: { name: 'Võ Nam Ngân Triều', role: 'Sinh viên', major: 'Công nghệ thông tin', email: 'vonamngantrieu2201@gmail.com', pastCredits: 0 }
+        };
+        let currentWeekOffset = 0; 
+        let currentGoalFilter = 'all';
+
+        // --- KHỞI TẠO TỪ CLOUD ---
+        function init() {
+            setSyncing(true);
+            
+            // Đọc dữ liệu từ Firebase
+            db.ref(DB_KEY).once('value').then((snapshot) => {
+                const cloudData = snapshot.val();
+                
+                if (cloudData) {
+                    state = { ...state, ...cloudData };
+                    cleanUpData();
+                    setSyncing(false);
+                    showToast("Đã lấy dữ liệu từ Đám mây ☁️");
+                } else {
+                    const saved = localStorage.getItem(STORAGE_KEY);
+                    if (saved) { 
+                        state = { ...state, ...JSON.parse(saved) }; 
+                        cleanUpData();
+                        db.ref(DB_KEY).set(state); 
+                    }
+                    setSyncing(false);
+                }
+                
+                applyTheme(); renderAll(); renderProfile(); renderRoadmap(); initNotificationsSafe();
+                
+            }).catch(error => {
+                console.error("Firebase Error:", error);
+                setSyncing(false);
+                document.getElementById('cloud-sync-icon').textContent = '❌';
+                document.getElementById('cloud-sync-icon').title = 'Lỗi kết nối Cloud';
+                
+                // Backup chạy bằng Local nếu mất mạng
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) { state = { ...state, ...JSON.parse(saved) }; cleanUpData(); }
+                applyTheme(); renderAll(); renderProfile(); renderRoadmap(); initNotificationsSafe();
+            });
+        }
+
+        // --- LƯU TRỮ LÊN CLOUD ---
+        function saveState() { 
+            setSyncing(true);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); 
+            
+            db.ref(DB_KEY).set(state).then(() => {
+                setSyncing(false);
+            }).catch(err => {
+                console.error("Lưu Cloud thất bại:", err);
+                setSyncing(false);
+                document.getElementById('cloud-sync-icon').textContent = '⚠️';
+            });
+            
+            renderAll(); 
+            renderRoadmap(); 
+        }
+
+        function manualSync() {
+            showToast("Đang đồng bộ dữ liệu...");
+            init();
+        }
+
+        function setSyncing(isSyncing) {
+            const icon = document.getElementById('cloud-sync-icon');
+            if(isSyncing) {
+                icon.classList.add('syncing');
+                icon.textContent = '🔄';
+            } else {
+                icon.classList.remove('syncing');
+                icon.textContent = '☁️';
+            }
+        }
+
+        function cleanUpData() {
+            if(!state.kanbanTasks) state.kanbanTasks = [];
+            if(!state.gpaData) state.gpaData = [];
+            if(!state.goals) state.goals = [];
+            if(!state.profile) state.profile = { name: 'User', role: '', major: '', email: '', pastCredits: 0 };
+            if(state.profile.pastCredits === undefined) state.profile.pastCredits = 0;
+            
+            let cleanedCourses = [];
+            state.courses.forEach(c => {
+                if (isNaN(c.startPeriod) || c.startPeriod < 1) c.startPeriod = 1;
+                if (isNaN(c.endPeriod) || c.endPeriod > 15) c.endPeriod = 3;
+                if (isNaN(c.day) || !c.day) c.day = 2;
+                
+                let existing = cleanedCourses.find(ex => (ex.name === c.name || (c.code && ex.code === c.code)) && ex.day === c.day && ex.startPeriod === c.startPeriod);
+                if (existing) {
+                    if (c.activeDates && c.activeDates.length > 0) {
+                        if (!existing.activeDates) existing.activeDates = [];
+                        c.activeDates.forEach(d => { if (!existing.activeDates.includes(d)) existing.activeDates.push(d); });
+                    }
+                } else { cleanedCourses.push(c); }
+            });
+            state.courses = cleanedCourses;
+        }
+
+        function switchView(viewId, navElement) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            if(navElement) navElement.classList.add('active');
+            document.getElementById('btn-add-course').style.display = (viewId === 'view-timetable') ? 'inline-flex' : 'none';
+            const titles = { 'view-timetable': 'Thời khóa biểu', 'view-sheet': 'Kế hoạch Đại học', 'view-dashboard': 'Tổng quan Dashboard', 'view-pomodoro': 'Phòng tập trung Pomodoro', 'view-profile': 'Hồ sơ cá nhân', 'view-roadmap': 'Các mục tiêu' };
+            document.getElementById('view-title').textContent = titles[viewId] || 'Horizon';
+            if(viewId === 'view-dashboard') renderDashboard();
+            if(viewId === 'view-roadmap') renderRoadmap();
+            if(viewId === 'view-profile') renderProfile(); 
+        }
+
+        // Tín chỉ thủ công
+        function calculateCurrentCredits() {
+            let total = 0; state.courses.forEach(c => { total += parseInt(c.credits) || 0; });
+            return { total: total, uniqueCount: state.courses.length };
+        }
+        function updateHeaderCredits() {
+            const creditData = calculateCurrentCredits();
+            const headerCreditEl = document.getElementById('header-current-credits');
+            if(headerCreditEl) headerCreditEl.textContent = creditData.total;
+        }
+
+        // Profile
+        function renderProfile() {
+            const name = state.profile.name || 'User';
+            const firstChar = name.trim().charAt(name.trim().lastIndexOf(' ') + 1) || name.charAt(0) || 'U';
+
+            document.getElementById('prof-inp-name').value = state.profile.name || '';
+            document.getElementById('prof-inp-role').value = state.profile.role || '';
+            document.getElementById('prof-inp-major').value = state.profile.major || '';
+            document.getElementById('prof-inp-email').value = state.profile.email || '';
+            document.getElementById('prof-inp-credits').value = state.profile.pastCredits || 0;
+            
+            document.querySelectorAll('.profile-form input').forEach(inp => { inp.disabled = true; });
+            const btn = document.getElementById('btn-edit-profile');
+            if(btn) { btn.innerHTML = "✏️ Chỉnh sửa"; btn.classList.remove('btn-success'); btn.classList.add('btn-primary'); }
+            
+            document.getElementById('prof-display-name').textContent = name;
+            let displayMajor = state.profile.role || '';
+            if(state.profile.major) displayMajor += (displayMajor ? ' | ' : '') + state.profile.major;
+            document.getElementById('prof-display-major').textContent = displayMajor || 'Sinh viên';
+            document.getElementById('prof-display-avatar').textContent = firstChar;
+            document.getElementById('mini-prof-name').textContent = name;
+            document.getElementById('mini-prof-role').textContent = state.profile.role ? state.profile.role.split('/')[0] : 'User';
+            document.getElementById('mini-prof-avatar').textContent = firstChar;
+        }
+        function toggleProfileEdit() {
+            const btn = document.getElementById('btn-edit-profile');
+            const inputs = document.querySelectorAll('.profile-form input');
+
+            if (btn.textContent.includes("Chỉnh sửa")) {
+                inputs.forEach(inp => { inp.disabled = false; });
+                btn.innerHTML = "💾 Lưu thông tin"; btn.classList.remove('btn-primary'); btn.classList.add('btn-success');
+                document.getElementById('prof-inp-name').focus();
+            } else {
+                state.profile.name = document.getElementById('prof-inp-name').value.trim() || 'User';
+                state.profile.role = document.getElementById('prof-inp-role').value.trim() || '';
+                state.profile.major = document.getElementById('prof-inp-major').value.trim() || '';
+                state.profile.email = document.getElementById('prof-inp-email').value.trim() || '';
+                state.profile.pastCredits = parseInt(document.getElementById('prof-inp-credits').value) || 0;
+
+                inputs.forEach(inp => { inp.disabled = true; });
+                btn.innerHTML = "✏️ Chỉnh sửa"; btn.classList.remove('btn-success'); btn.classList.add('btn-primary');
+                saveState(); renderProfile(); showToast("Đã cập nhật thông tin thành công");
+            }
+        }
+
+        // Dashboard
+        function renderDashboard() {
+            const creditData = calculateCurrentCredits();
+            document.getElementById('dash-total-courses').textContent = creditData.uniqueCount;
+            const currentCredits = creditData.total;
+            const pastCredits = Number(state.profile.pastCredits) || 0;
+            document.getElementById('dash-total-credits').textContent = currentCredits + pastCredits;
+
+            let dayCount = {2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0}; let totalPeriods = 0;
+            state.courses.forEach(c => { 
+                const p = (c.endPeriod - c.startPeriod + 1); const weight = (c.interval === 2) ? 0.5 : 1; 
+                dayCount[c.day] += p * weight; totalPeriods += p * weight; 
+            });
+            document.getElementById('dash-total-periods').textContent = Math.round(totalPeriods);
+
+            let maxDay = 2; let maxVal = -1;
+            for(let d=2; d<=7; d++) { if(dayCount[d] > maxVal) { maxVal = dayCount[d]; maxDay = d; } }
+            if(state.courses.length > 0) {
+                document.getElementById('dash-busiest-day').textContent = `Thứ ${maxDay}`;
+                document.getElementById('dash-busiest-day').nextElementSibling.textContent = `Khoảng ${Math.round(maxVal)} tiết / tuần`;
+            } else { document.getElementById('dash-busiest-day').textContent = `Trống`; }
+
+            const chartDiv = document.getElementById('dash-bar-chart'); chartDiv.innerHTML = '';
+            let chartMax = Math.max(...Object.values(dayCount), 10); 
+            for(let d=2; d<=7; d++) {
+                const val = dayCount[d]; const heightPercent = (val / chartMax) * 100;
+                chartDiv.innerHTML += `<div class="bar-col"><div class="bar-fill" style="height: ${heightPercent}%;"></div><div class="bar-label">T${d}</div></div>`;
+            }
+        }
+
+        // Task
+        function toggleTaskType() {
+            const type = document.getElementById('kTaskType').value;
+            const futureOpts = document.getElementById('kTaskFutureOptions');
+            if (type === 'future') { futureOpts.style.display = 'flex'; } else {
+                futureOpts.style.display = 'none';
+                document.getElementById('newTaskDate').value = ''; document.getElementById('newTaskTime').value = ''; document.getElementById('newTaskRecurrence').value = 'once';
+            }
+        }
+        function renderTasks() {
+            const container = document.getElementById('taskList');
+            if (state.kanbanTasks.length === 0) { container.innerHTML = `<div style="font-size:0.8rem; color:var(--text-muted); padding:10px; font-style:italic;">Trống.</div>`; return; }
+            
+            const sortedTasks = [...state.kanbanTasks].sort((a, b) => {
+                if (a.done === b.done) return b.id - a.id;
+                return a.done ? 1 : -1;
+            });
+
+            container.innerHTML = sortedTasks.map(t => {
+                let badgeTime = '';
+                if (t.date || t.time) {
+                    let dt = []; if (t.date) { const dParts = t.date.split('-'); dt.push(`${dParts[2]}/${dParts[1]}/${dParts[0]}`); } if (t.time) dt.push(t.time);
+                    badgeTime = `<span class="task-badge badge-time" style="margin-bottom: 4px;">⏳ ${dt.join(' - ')}</span>`;
+                }
+                let badgeRec = '';
+                if (t.recurrence && t.recurrence !== 'once') {
+                    const recMap = { 'daily': 'Hằng ngày', 'weekly': 'Hằng tuần' };
+                    badgeRec = `<span class="task-badge badge-repeat" style="margin-bottom: 4px;">🔄 ${recMap[t.recurrence]}</span>`;
+                }
+
+                return `
+                <div class="task-item pri-${t.pri} ${t.done ? 'done' : ''}">
+                    <label class="task-checkbox-wrapper"><input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTask(${t.id})"><span class="task-checkmark"></span></label>
+                    <div class="task-content">
+                        <span class="task-text" style="${t.done ? 'text-decoration:line-through;color:var(--text-muted)' : ''}">${t.text}</span>
+                        ${(badgeTime || badgeRec) ? `<div class="task-meta">${badgeTime}${badgeRec}</div>` : ''}
+                    </div>
+                    <div class="task-controls">
+                        <button class="k-btn del" style="background: transparent; color: var(--danger); border: none; padding: 4px; display: flex; align-items: center;" onclick="delKTask(${t.id})">✕</button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+        function addKanbanTask() {
+            const inp = document.getElementById('kTaskName'); const pri = document.getElementById('kTaskPri');
+            const dInp = document.getElementById('newTaskDate'); const tInp = document.getElementById('newTaskTime'); const recInp = document.getElementById('newTaskRecurrence');
+            if(!inp.value.trim()) return;
+            state.kanbanTasks.push({ id: Date.now(), text: inp.value.trim(), pri: pri.value, date: dInp.value, time: tInp.value, recurrence: recInp ? recInp.value : 'once', done: false });
+            inp.value = ''; dInp.value = ''; tInp.value = ''; if(recInp) recInp.value = 'once'; 
+            document.getElementById('kTaskType').value = 'upcoming'; toggleTaskType();
+            saveState();
+        }
+        function toggleTask(id) { const task = state.kanbanTasks.find(t => t.id === id); if (task) { task.done = !task.done; saveState(); } }
+        function delKTask(id) { state.kanbanTasks = state.kanbanTasks.filter(x => x.id !== id); saveState(); }
+
+        // Grid Lịch
+        function getWeekRange(offset) {
+            const now = new Date(); const day = now.getDay() === 0 ? 7 : now.getDay(); 
+            const monday = new Date(now); monday.setDate(now.getDate() - day + 1 + (offset * 7)); monday.setHours(0,0,0,0);
+            const sunday = new Date(monday); sunday.setDate(monday.getDate() + 6); sunday.setHours(23,59,59,999);
+            const fmt = (d) => String(d.getDate()).padStart(2,'0') + '/' + String(d.getMonth()+1).padStart(2,'0');
+            let label = offset === 0 ? "Tuần này" : (offset > 0 ? "Tuần sau" : "Tuần trước");
+            return { start: monday, end: sunday, label: label + ` (${fmt(monday)} - ${fmt(sunday)})` };
+        }
+        function changeWeek(dir) { currentWeekOffset += dir; renderGrid(); }
+        function resetWeek() { currentWeekOffset = 0; renderGrid(); }
+
+        function renderAll() { document.getElementById('currentPlanName').textContent = state.planName; document.getElementById('noteInput').value = state.note || ''; updateHeaderCredits(); renderGrid(); renderSidebar(); renderTasks(); }
+
+        function renderGrid() {
+            const week = getWeekRange(currentWeekOffset);
+            document.getElementById('weekLabel').textContent = week.label;
+            const grid = document.getElementById('timetableGrid');
+            grid.innerHTML = `<div class="grid-header">Thời gian \\ Thứ</div>` + [2,3,4,5,6,7].map(d => `<div class="grid-header">Thứ ${d}</div>`).join('');
+            
+            periods.forEach((p, idx) => {
+                const timeParts = p.time.split(' - ');
+                grid.innerHTML += `<div class="grid-time" style="grid-row: ${idx+2}; grid-column: 1; padding: 4px;">
+                    <strong style="font-size: 0.85rem; color: var(--text);">${timeParts[0]}</strong>
+                    <span style="font-size: 0.7rem; color: var(--text-muted);">${timeParts[1]}</span>
+                </div>`;
+                for (let d = 2; d <= 7; d++) { grid.innerHTML += `<div class="grid-cell" style="grid-row: ${idx+2}; grid-column: ${d};" ondragover="event.preventDefault()" ondragenter="this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleDrop(event, ${d}, ${p.p})"></div>`; }
+            });
+
+            const visibleCourses = state.courses.filter(c => {
+                if (!c.activeDates || c.activeDates.length === 0) return true;
+                return c.activeDates.some(dStr => {
+                    const parts = dStr.split('-'); const d = new Date(parts[0], parts[1]-1, parts[2]); d.setHours(0,0,0,0);
+                    return d >= week.start && d <= week.end;
+                });
+            });
+
+            visibleCourses.forEach(c => {
+                if (c.day > 7) return; 
+                
+                let start = Math.min(c.startPeriod, c.endPeriod); let end = Math.max(c.startPeriod, c.endPeriod);
+                if (isNaN(start) || start < 1) start = 1; if (isNaN(end) || end > 15) end = 15;
+                
+                const startTimeStr = periods[start-1].time.split(' - ')[0]; const endTimeStr = periods[end-1].time.split(' - ')[1];
+
+                const card = document.createElement('div'); card.className = `course-card`;
+                card.style.cssText = `grid-row: ${start + 1} / span ${end - start + 1}; grid-column: ${c.day}; background-color: ${c.color || COLORS[0]}; width: 100%; z-index: 10;`;
+                card.draggable = true;
+                card.ondragstart = (e) => { e.dataTransfer.setData('text/plain', c.id); };
+                card.onclick = () => openCourseModal(c.id);
+
+                card.innerHTML = `
+                <div style="display:flex; flex-direction:column; height: 100%;">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 8px;">
+                        <span style="font-size: 0.8rem; background: rgba(0,0,0,0.25); padding: 4px 8px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 2px 4px rgba(0,0,0,0.1);">${c.code || 'SỰ KIỆN'}</span>
+                        ${c.type ? `<span style="background: rgba(0,0,0,0.4); padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 800; border: 1px solid rgba(255,255,255,0.1);">${c.type}</span>` : ''}
+                    </div>
+                    <div style="font-size: 0.95rem; font-weight: 800; line-height: 1.35; margin-bottom: auto; text-shadow: 0 1px 3px rgba(0,0,0,0.4);">${c.name}</div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 10px;">
+                        ${c.teacher ? `<div style="font-size: 0.8rem; font-weight: 600; opacity: 0.95; display: flex; align-items: center; gap: 4px; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">👤 ${c.teacher}</div>` : ''}
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.35); padding: 8px 10px; border-radius: 8px; font-size: 0.85rem; font-weight: 700; border: 1px solid rgba(255,255,255,0.08); box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);">
+                            <span style="display:flex; align-items:center; gap:4px;">📍 ${c.room || 'Chưa có'}</span>
+                            <span style="color: #fff; display:flex; align-items:center; gap:4px;">⏱ ${startTimeStr} - ${endTimeStr}</span>
+                        </div>
+                    </div>
+                </div>`;
+                grid.appendChild(card);
+            });
+        }
+
+        function handleDrop(e, day, startPeriod) {
+            e.preventDefault(); document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over'));
+            const course = state.courses.find(c => c.id === e.dataTransfer.getData('text/plain'));
+            if (!course) return;
+            const span = course.endPeriod - course.startPeriod; course.day = day; course.startPeriod = Math.min(startPeriod, 15 - span); course.endPeriod = course.startPeriod + span;
+            saveState(); showToast("Đã cập nhật vị trí lịch trình");
+        }
+
+        function renderSidebar() {
+            const date = new Date(); const days = ['Chủ Nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
+            const todayDay = date.getDay() === 0 ? 8 : date.getDay() + 1;
+            document.getElementById('todayDateStr').textContent = `📅 ${days[date.getDay()]} · ${date.toLocaleDateString('vi-VN')}`;
+            const todayStr = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+            
+            const todayClassesMap = new Map();
+            state.courses.forEach(c => {
+                if(c.day !== todayDay) return;
+                if(c.activeDates && c.activeDates.length > 0 && !c.activeDates.includes(todayStr)) return;
+                const key = `${c.name}-${c.startPeriod}`;
+                if (!todayClassesMap.has(key)) todayClassesMap.set(key, c);
+            });
+            const todayClasses = Array.from(todayClassesMap.values()).sort((a,b) => a.startPeriod - b.startPeriod);
+            
+            const container = document.getElementById('todayClasses');
+            if (todayClasses.length === 0) container.innerHTML = `<span style="font-size:0.8rem; color:var(--text-muted); font-style:italic;">🎉 Hôm nay bạn không có lịch trình nào.</span>`;
+            else container.innerHTML = todayClasses.map(c => {
+                let s = Math.min(c.startPeriod, c.endPeriod); if (isNaN(s) || s < 1) s = 1;
+                let e = Math.max(c.startPeriod, c.endPeriod); if (isNaN(e) || e > 15) e = 15;
+                const sT = periods[s-1].time.split(' - ')[0]; const eT = periods[e-1].time.split(' - ')[1];
+                return `<div class="today-item" style="border-left-color:${c.color || 'var(--primary)'}"><strong>${c.name}</strong><div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">${c.room ? '📍 ' + c.room + ' • ' : ''}⏱ ${sT} - ${eT}</div></div>`;
+            }).join('');
+        }
+
+        // --- MỤC TIÊU LỘ TRÌNH (ROADMAP) ---
+        function filterGoals(cat, element) {
+            currentGoalFilter = cat;
+            document.querySelectorAll('#view-roadmap .k-tab').forEach(el => el.classList.remove('active'));
+            if(element) element.classList.add('active');
+            renderRoadmap();
+        }
+
+        function toggleGoalDate() {
+            const toggle = document.getElementById('goalDeadlineToggle').value;
+            const dateInp = document.getElementById('goalDate');
+            if(toggle === 'yes') { dateInp.style.display = 'block'; } else { dateInp.style.display = 'none'; dateInp.value = ''; }
+        }
+
+        function renderRoadmap() {
+            const grid = document.getElementById('roadmapGrid');
+            if(!state.goals) state.goals = [];
+            
+            let totalProgress = 0; let totalGoalsWeight = state.goals.length;
+            state.goals.forEach(g => {
+                if (g.subgoals && g.subgoals.length > 0) {
+                    const dones = g.subgoals.filter(s => s.done).length; totalProgress += (dones / g.subgoals.length);
+                } else { totalProgress += (g.status === 'done' ? 1 : 0); }
+            });
+            const pct = totalGoalsWeight === 0 ? 0 : Math.round((totalProgress / totalGoalsWeight) * 100);
+            
+            document.getElementById('roadmap-pct-text').textContent = `${pct}%`;
+            document.getElementById('roadmap-pct-bar').style.width = `${pct}%`;
+
+            let filtered = state.goals;
+            if(currentGoalFilter !== 'all') { filtered = state.goals.filter(g => g.cat === currentGoalFilter); }
+
+            let sorted = [...filtered].sort((a,b) => {
+                const mapScore = { 'todo': 0, 'doing': 1, 'done': 2 };
+                const aS = mapScore[a.status || 'todo']; const bS = mapScore[b.status || 'todo'];
+                if(aS !== bS) return aS - bS; 
+                if(a.date && b.date) return a.date.localeCompare(b.date);
+                return b.id - a.id;
+            });
+
+            if(sorted.length === 0) { grid.innerHTML = `<p style="color:var(--text-muted); grid-column: 1 / -1;">Chưa có mục tiêu nào trong mục này. Hãy thêm ở phía trên nhé!</p>`; return; }
+
+            grid.innerHTML = sorted.map(g => {
+                let catClass = 'cat-prog'; let catLabel = 'Lập trình';
+                if(g.cat === 'lang') { catClass = 'cat-lang'; catLabel = 'Ngoại ngữ'; }
+                if(g.cat === 'career') { catClass = 'cat-career'; catLabel = 'Sự nghiệp'; }
+                
+                let priClass = 'goal-pri-med'; let priLabel = 'Ưu tiên: Vừa';
+                if(g.priority === 'high') { priClass = 'goal-pri-high'; priLabel = '🔥 Quan trọng'; }
+                if(g.priority === 'low') { priClass = 'goal-pri-low'; priLabel = '💡 Ưu tiên: Thấp'; }
+
+                let dateStr = '♾️ Dài hạn';
+                if(g.hasDeadline && g.date) { const d = g.date.split('-'); dateStr = `⏳ Deadline: ${d[2]}/${d[1]}/${d[0]}`; }
+
+                let gPct = 0; let subgoalsHTML = '';
+                if(g.subgoals && g.subgoals.length > 0) {
+                    const sDones = g.subgoals.filter(s => s.done).length;
+                    gPct = Math.round((sDones / g.subgoals.length) * 100);
+                    subgoalsHTML = `<div class="goal-sub-list">` + 
+                        g.subgoals.map(s => `
+                            <label class="goal-sub-item">
+                                <input type="checkbox" ${s.done ? 'checked' : ''} onchange="toggleSubgoal(${g.id}, ${s.id})">
+                                <span style="${s.done ? 'text-decoration:line-through; color:var(--text-muted);' : ''}">${s.text}</span>
+                            </label>
+                        `).join('') + `</div>`;
+                } else { gPct = (g.status === 'done') ? 100 : 0; }
+
+                return `
+                <div class="goal-card status-${g.status || 'todo'}">
+                    <div>
+                        <div class="goal-header">
+                            <span class="goal-cat ${catClass}">${catLabel}</span>
+                            <span class="${priClass}">${priLabel}</span>
+                        </div>
+                        <div class="goal-title" style="${g.status === 'done' ? 'text-decoration:line-through; color:var(--text-muted)' : ''}">${g.title}</div>
+                        <div class="goal-meta">${dateStr} • <span>Tiến độ: ${gPct}%</span></div>
+                        <div class="goal-progress-mini"><div class="goal-progress-mini-fill" style="width: ${gPct}%;"></div></div>
+                        ${subgoalsHTML}
+                    </div>
+                    <div class="goal-actions">
+                        <button class="status-btn ${g.status === 'todo' ? 'active' : ''} s-todo" onclick="updateGoalStatus(${g.id}, 'todo')">Tạm hoãn</button>
+                        <button class="status-btn ${g.status === 'doing' ? 'active' : ''} s-doing" onclick="updateGoalStatus(${g.id}, 'doing')">Đang cày ⏳</button>
+                        <button class="status-btn ${g.status === 'done' ? 'active' : ''} s-done" onclick="updateGoalStatus(${g.id}, 'done')">Xong ✓</button>
+                    </div>
+                    <button class="icon-btn" style="position: absolute; bottom: 20px; right: 20px; color:var(--danger); padding:4px; border:none; background:rgba(244, 63, 94, 0.1);" onclick="deleteGoal(${g.id})" title="Xóa mục tiêu">✕</button>
+                </div>`;
+            }).join('');
+        }
+
+        function addGoal() {
+            const title = document.getElementById('goalTitle').value.trim(); const cat = document.getElementById('goalCat').value; 
+            const priority = document.getElementById('goalPri').value; const hasDeadline = document.getElementById('goalDeadlineToggle').value === 'yes';
+            const date = document.getElementById('goalDate').value; const subtext = document.getElementById('goalSubtasks').value.trim();
+
+            if(!title) return alert("Vui lòng nhập tên mục tiêu!");
+            
+            let subgoals = [];
+            if(subtext) {
+                const lines = subtext.split('\n');
+                lines.forEach((l, idx) => {
+                    let text = l.trim();
+                    if(text.startsWith('-') || text.startsWith('+') || text.startsWith('*') || text.match(/^\d+\./)) { text = text.replace(/^[-+*]\s*/, '').replace(/^\d+\.\s*/, ''); }
+                    if(text) subgoals.push({ id: Date.now() + idx, text: text, done: false });
+                });
+            }
+
+            if(!state.goals) state.goals = [];
+            state.goals.push({ id: Date.now(), title, cat, priority, hasDeadline, date, status: 'todo', subgoals: subgoals });
+            
+            document.getElementById('goalTitle').value = ''; document.getElementById('goalDate').value = ''; document.getElementById('goalSubtasks').value = '';
+            document.getElementById('goalDeadlineToggle').value = 'no'; toggleGoalDate();
+            saveState(); showToast("Đã khởi tạo lộ trình mới");
+        }
+
+        function updateGoalStatus(id, newStatus) {
+            const g = state.goals.find(x => x.id === id); 
+            if(g) { 
+                g.status = newStatus;
+                if (newStatus === 'done' && g.subgoals) { g.subgoals.forEach(s => s.done = true); }
+                saveState(); 
+            } 
+        }
+
+        function toggleSubgoal(goalId, subId) {
+            const g = state.goals.find(x => x.id === goalId);
+            if(g && g.subgoals) {
+                const s = g.subgoals.find(x => x.id === subId);
+                if(s) {
+                    s.done = !s.done;
+                    const allDone = g.subgoals.every(sub => sub.done); const anyDone = g.subgoals.some(sub => sub.done);
+                    if(allDone) g.status = 'done'; else if(anyDone) g.status = 'doing'; else g.status = 'todo';
+                    saveState();
+                }
+            }
+        }
+        function deleteGoal(id) { if(confirm("Bạn có chắc muốn xóa mục tiêu này khỏi lộ trình?")) { state.goals = state.goals.filter(x => x.id !== id); saveState(); } }
+
+        // --- POMODORO (ĐÃ SỬA LỖI & THÊM ÂM THANH CHUẨN) ---
+        let pomoTime = 25 * 60; let pomoInterval = null; let isPomoRunning = false; let currentPomoMode = 'focus';
+        
+        function updatePomoDisplay() {
+            const m = Math.floor(pomoTime / 60).toString().padStart(2, '0'); const s = (pomoTime % 60).toString().padStart(2, '0');
+            document.getElementById('pomo-big-timer').textContent = `${m}:${s}`;
+        }
+        
+        function setPomoMode(mins, btn, mode) {
+            document.querySelectorAll('.pomo-mode-btn').forEach(el => el.classList.remove('active')); if(btn) btn.classList.add('active');
+            clearInterval(pomoInterval); isPomoRunning = false; document.getElementById('pomo-main-btn').textContent = "Bắt đầu";
+            currentPomoMode = mode; pomoTime = mins * 60; updatePomoDisplay();
+        }
+        
+        function togglePomo() {
+            try {
+                const btn = document.getElementById('pomo-main-btn');
+                if (isPomoRunning) { 
+                    clearInterval(pomoInterval); 
+                    btn.textContent = "Tiếp tục"; 
+                } else {
+                    pomoInterval = setInterval(() => {
+                        if (pomoTime > 0) { 
+                            pomoTime--; 
+                            updatePomoDisplay(); 
+                        } else {
+                            clearInterval(pomoInterval); 
+                            btn.textContent = "Bắt đầu"; 
+                            isPomoRunning = false; 
+                            
+                            // Phát âm thanh khi hết giờ
+                            playPomoSound();
+                            
+                            setTimeout(() => {
+                                alert(currentPomoMode === 'focus' ? "Đã hết thời gian tập trung! Hãy nghỉ ngơi một chút nhé." : "Hết giờ nghỉ ngơi! Bắt đầu chu kỳ tập trung mới nào.");
+                            }, 500);
+                        }
+                    }, 1000);
+                    btn.textContent = "Tạm dừng";
+                }
+                isPomoRunning = !isPomoRunning;
+            } catch (err) {
+                console.error("Lỗi Pomodoro:", err);
+            }
+        }
+        
+        function resetPomo() { clearInterval(pomoInterval); isPomoRunning = false; document.getElementById('pomo-main-btn').textContent = "Bắt đầu"; const activeBtn = document.querySelector('.pomo-mode-btn.active'); if(activeBtn) activeBtn.click(); else setPomoMode(25, null, 'focus'); }
+        
+        function playPomoSound() { 
+            try { 
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                const ctx = new AudioContext();
+                
+                function playTone(freq, startTime, duration) {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.type = 'sine';
+                    osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(0.5, startTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, startTime + duration);
+                    osc.start(startTime);
+                    osc.stop(startTime + duration);
+                }
+                
+                const now = ctx.currentTime;
+                playTone(880, now, 0.4);             // Ding 1
+                playTone(1046.50, now + 0.25, 0.4);  // Ding 2 
+                playTone(1318.51, now + 0.5, 1.0);   // Ding 3 (Ngân)
+            } catch(e) {
+                console.log("Trình duyệt không hỗ trợ AudioContext");
+            } 
+        }
+
+        // Utils Modal
+        function saveNote() { state.note = document.getElementById('noteInput').value; localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+        function renamePlan() { const name = prompt("Nhập tên học kỳ/phương án:", state.planName); if (name && name.trim()) { state.planName = name.trim(); saveState(); } }
+        function renderColorPicker(selectedColor) {
+            const picker = document.getElementById('colorPicker');
+            picker.innerHTML = COLORS.map(c => `<div class="color-circle ${c === selectedColor ? 'selected' : ''}" style="background:${c}" onclick="selectColor('${c}')" data-color="${c}"></div>`).join('');
+        }
+        function selectColor(color) {
+            document.querySelectorAll('.color-circle').forEach(el => el.classList.remove('selected'));
+            const target = document.querySelector(`.color-circle[data-color="${color}"]`);
+            if(target) target.classList.add('selected');
+        }
+
+        // --- MODAL COURSE KÈM TÍNH NĂNG NHÂN BẢN ---
+        function openCourseModal(id = null) {
+            document.getElementById('courseModalOverlay').classList.add('active');
+            const selColor = id ? (state.courses.find(x => x.id === id).color || COLORS[0]) : COLORS[0];
+            document.getElementById('colorPicker').innerHTML = COLORS.map(c => `<div class="color-circle ${c === selColor ? 'selected' : ''}" style="background:${c}" onclick="document.querySelectorAll('.color-circle').forEach(el=>el.classList.remove('selected')); this.classList.add('selected');" data-color="${c}"></div>`).join('');
+
+            if (id) {
+                const c = state.courses.find(x => x.id === id);
+                document.getElementById('modalTitle').textContent = 'Sửa Lịch Trình';
+                document.getElementById('courseId').value = c.id; 
+                document.getElementById('courseCode').value = c.code || ''; 
+                document.getElementById('courseName').value = c.name || '';
+                document.getElementById('courseTeacher').value = c.teacher || ''; 
+                document.getElementById('courseRoom').value = c.room || ''; 
+                document.getElementById('courseDay').value = c.day || 2;
+                document.getElementById('courseStart').value = c.startPeriod || 1; 
+                document.getElementById('courseEnd').value = c.endPeriod || 3;
+                document.getElementById('courseType').value = c.type || ''; 
+                document.getElementById('courseCredits').value = c.credits || 0; 
+                document.getElementById('courseInterval').value = c.interval || 1;
+                
+                if (c.activeDates && c.activeDates.length > 0) { 
+                    let sorted = [...c.activeDates].sort(); 
+                    document.getElementById('courseStartDate').value = formatDateToVN(sorted[0]); 
+                    document.getElementById('courseEndDate').value = formatDateToVN(sorted[sorted.length - 1]); 
+                } else { document.getElementById('courseStartDate').value = ''; document.getElementById('courseEndDate').value = ''; }
+                
+                document.getElementById('btnDelete').style.display = 'block';
+                document.getElementById('btnDuplicate').style.display = 'block'; // Hiện nút Nhân bản
+            } else {
+                document.getElementById('modalTitle').textContent = 'Thêm sự kiện / môn học';
+                document.getElementById('courseId').value = ''; 
+                document.getElementById('courseCode').value = ''; 
+                document.getElementById('courseName').value = '';
+                document.getElementById('courseTeacher').value = ''; 
+                document.getElementById('courseRoom').value = ''; 
+                document.getElementById('courseDay').value = '2'; 
+                document.getElementById('courseStart').value = '1'; 
+                document.getElementById('courseEnd').value = '3'; 
+                document.getElementById('courseType').value = 'LT'; 
+                document.getElementById('courseCredits').value = '0'; 
+                document.getElementById('courseInterval').value = '1'; 
+                
+                let now = new Date(); const dayOffset = now.getDay() === 0 ? -6 : 1 - now.getDay(); now.setDate(now.getDate() + dayOffset);
+                let end = new Date(now); end.setDate(end.getDate() + 105); 
+                document.getElementById('courseStartDate').value = formatDateToVN(now.toISOString().split('T')[0]); 
+                document.getElementById('courseEndDate').value = formatDateToVN(end.toISOString().split('T')[0]);
+                
+                document.getElementById('btnDelete').style.display = 'none';
+                document.getElementById('btnDuplicate').style.display = 'none'; // Ẩn nút Nhân bản khi tạo mới
+            }
+        }
+        
+        // Hàm Nhân bản sự kiện (Chỉ đổi thứ và lưu lại)
+        function duplicateCourse() {
+            document.getElementById('courseId').value = ''; // Xóa ID cũ để khi Save sẽ tạo thẻ mới
+            document.getElementById('modalTitle').textContent = 'Nhân bản sự kiện';
+            document.getElementById('courseName').value += ' (Bản sao)';
+            document.getElementById('btnDelete').style.display = 'none';
+            document.getElementById('btnDuplicate').style.display = 'none';
+            showToast("Đã copy! Hãy chọn Thứ/Giờ mới và bấm Lưu lại.");
+        }
+
+        function saveCourse() {
+            const id = document.getElementById('courseId').value; const name = document.getElementById('courseName').value.trim();
+            if (!name) return alert("Vui lòng nhập tên sự kiện!");
+            let start = parseInt(document.getElementById('courseStart').value); let end = parseInt(document.getElementById('courseEnd').value);
+            if (isNaN(start) || start < 1) start = 1; if (isNaN(end) || end > 15) end = 15;
+            if (start > end) return alert("Giờ bắt đầu không thể lớn hơn giờ kết thúc!");
+            
+            const colorEl = document.querySelector('.color-circle.selected'); const color = colorEl ? colorEl.dataset.color : COLORS[0];
+            const interval = parseInt(document.getElementById('courseInterval').value) || 1; const dayOfWeek = parseInt(document.getElementById('courseDay').value);
+            const startDateStr = parseVNToDate(document.getElementById('courseStartDate').value); const endDateStr = parseVNToDate(document.getElementById('courseEndDate').value);
+            
+            let activeDates = [];
+            if (startDateStr && endDateStr && startDateStr.length === 10 && endDateStr.length === 10) {
+                let curD = new Date(startDateStr.split('-')[0], startDateStr.split('-')[1] - 1, startDateStr.split('-')[2]);
+                const endD = new Date(endDateStr.split('-')[0], endDateStr.split('-')[1] - 1, endDateStr.split('-')[2]);
+                const targetDay = dayOfWeek === 8 ? 0 : dayOfWeek - 1; 
+                while (curD.getDay() !== targetDay && curD <= endD) { curD.setDate(curD.getDate() + 1); }
+                while (curD <= endD) { activeDates.push(`${curD.getFullYear()}-${String(curD.getMonth()+1).padStart(2,'0')}-${String(curD.getDate()).padStart(2,'0')}`); curD.setDate(curD.getDate() + (interval * 7)); }
+            } else if (id) { const oldCourse = state.courses.find(c => c.id === id); if(oldCourse && oldCourse.activeDates) activeDates = oldCourse.activeDates; }
+
+            const data = {
+                id: id || 'c_' + Date.now(), code: document.getElementById('courseCode').value, name: name.replace(' (Bản sao)', ''), 
+                teacher: document.getElementById('courseTeacher').value, room: document.getElementById('courseRoom').value,
+                day: dayOfWeek, startPeriod: start, endPeriod: end, color, type: document.getElementById('courseType').value, 
+                credits: parseInt(document.getElementById('courseCredits').value) || 0,
+                interval: interval, activeDates: activeDates
+            };
+            if (id) state.courses[state.courses.findIndex(c => c.id === id)] = data; else state.courses.push(data);
+            closeModal('courseModalOverlay'); saveState(); showToast(id ? "Đã cập nhật thành công" : "Đã thêm vào lịch trình");
+        }
+        function deleteCourse() { if(confirm("Bạn có chắc chắn muốn xóa sự kiện này khỏi lịch?")) { state.courses = state.courses.filter(c => c.id !== document.getElementById('courseId').value); closeModal('courseModalOverlay'); saveState(); showToast("Đã xóa khỏi lịch"); } }
+
+        function formatDateInput(input) { let v = input.value.replace(/\D/g, ''); if (v.length >= 3 && v.length <= 4) v = v.slice(0,2) + '/' + v.slice(2); else if (v.length > 4) v = v.slice(0,2) + '/' + v.slice(2,4) + '/' + v.slice(4,8); input.value = v; }
+        function syncPickerToText(picker, textId) { if (picker.value) { const parts = picker.value.split('-'); document.getElementById(textId).value = `${parts[2]}/${parts[1]}/${parts[0]}`; } }
+        function formatDateToVN(yyyy_mm_dd) { if (!yyyy_mm_dd) return ''; const p = yyyy_mm_dd.split('-'); if (p.length === 3) return `${p[2]}/${p[1]}/${p[0]}`; return yyyy_mm_dd; }
+        function parseVNToDate(dd_mm_yyyy) { if (!dd_mm_yyyy) return ''; const p = dd_mm_yyyy.split('/'); if (p.length === 3) { let y = p[2]; if (y.length === 2) y = "20" + y; return `${y}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`; } return ''; }
+
+        // Data Import/Export
+        function openDataModal() { document.getElementById('dataModalOverlay').classList.add('active'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+        
+        function exportJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
+            const a = document.createElement('a'); a.href = dataStr; a.download = `thoikhoabieu_${Date.now()}.json`; a.click();
+            closeModal('dataModalOverlay'); showToast("Đã xuất file JSON thành công");
+        }
+
+        function importFromPastedText() {
+            const text = document.getElementById('pasteDataInput').value.trim();
+            if (!text) return alert("Vui lòng dán dữ liệu vào ô!");
+
+            if (text.startsWith('{') || text.startsWith('[')) {
+                try {
+                    const parsed = JSON.parse(text);
+                    if (parsed.plans && parsed.plans.length > 0) {
+                        const currentPlan = parsed.plans[0];
+                        state.courses = currentPlan.courses || [];
+                        state.planName = currentPlan.name || state.planName;
+                    } else if (parsed.courses) {
+                        state.courses = parsed.courses;
+                        if(parsed.planName) state.planName = parsed.planName;
+                        if(parsed.profile) state.profile = parsed.profile;
+                        if(parsed.kanbanTasks) state.kanbanTasks = parsed.kanbanTasks;
+                        if(parsed.gpaData) state.gpaData = parsed.gpaData;
+                        if(parsed.goals) state.goals = parsed.goals;
+                    }
+                    
+                    let cleanedCourses = [];
+                    state.courses.forEach(c => {
+                        if (isNaN(c.startPeriod) || c.startPeriod < 1) c.startPeriod = 1;
+                        if (isNaN(c.endPeriod) || c.endPeriod > 15) c.endPeriod = 3;
+                        if (isNaN(c.day) || !c.day) c.day = 2;
+                        let existing = cleanedCourses.find(ex => (ex.name === c.name || (c.code && ex.code === c.code)) && ex.day === c.day && ex.startPeriod === c.startPeriod);
+                        if (existing) {
+                            if (c.activeDates && c.activeDates.length > 0) {
+                                if (!existing.activeDates) existing.activeDates = [];
+                                c.activeDates.forEach(d => { if (!existing.activeDates.includes(d)) existing.activeDates.push(d); });
+                            }
+                        } else { cleanedCourses.push(c); }
+                    });
+                    state.courses = cleanedCourses;
+
+                    resetWeek(); saveState(); closeModal('dataModalOverlay'); showToast("Đã khôi phục dữ liệu JSON thành công!");
+                    document.getElementById('pasteDataInput').value = '';
+                } catch(e) { alert("Dữ liệu JSON không hợp lệ!"); }
+            } else if (text.includes('BEGIN:VCALENDAR')) {
+                parseICSData(text); document.getElementById('pasteDataInput').value = '';
+            } else { alert("Không nhận diện được định dạng. Vui lòng dán mã JSON hoặc nội dung file ICS hợp lệ."); }
+        }
+
+        function importJSON(e) {
+            const file = e.target.files[0]; if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                try {
+                    const parsed = JSON.parse(ev.target.result);
+                    if (parsed.plans && parsed.plans.length > 0) {
+                        const currentPlan = parsed.plans[0];
+                        state.courses = currentPlan.courses || [];
+                        state.planName = currentPlan.name || state.planName;
+                    } else if (parsed.courses) {
+                        state.courses = parsed.courses;
+                        if(parsed.planName) state.planName = parsed.planName;
+                        if(parsed.profile) state.profile = parsed.profile;
+                        if(parsed.kanbanTasks) state.kanbanTasks = parsed.kanbanTasks;
+                        if(parsed.gpaData) state.gpaData = parsed.gpaData;
+                        if(parsed.goals) state.goals = parsed.goals;
+                    }
+
+                    let cleanedCourses = [];
+                    state.courses.forEach(c => {
+                        if (isNaN(c.startPeriod) || c.startPeriod < 1) c.startPeriod = 1;
+                        if (isNaN(c.endPeriod) || c.endPeriod > 15) c.endPeriod = 3;
+                        if (isNaN(c.day) || !c.day) c.day = 2;
+                        let existing = cleanedCourses.find(ex => (ex.name === c.name || (c.code && ex.code === c.code)) && ex.day === c.day && ex.startPeriod === c.startPeriod);
+                        if (existing) {
+                            if (c.activeDates && c.activeDates.length > 0) {
+                                if (!existing.activeDates) existing.activeDates = [];
+                                c.activeDates.forEach(d => { if (!existing.activeDates.includes(d)) existing.activeDates.push(d); });
+                            }
+                        } else { cleanedCourses.push(c); }
+                    });
+                    state.courses = cleanedCourses;
+
+                    resetWeek(); saveState(); closeModal('dataModalOverlay'); showToast("Đã khôi phục và hiển thị thời khóa biểu");
+                } catch (err) { alert("Lỗi: File JSON không đúng định dạng!"); }
+            }; reader.readAsText(file); e.target.value = '';
+        }
+
+        function importICS(e) {
+            const file = e.target.files[0]; if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(ev) { parseICSData(ev.target.result); }; 
+            reader.readAsText(file); e.target.value = '';
+        }
+
+        function parseICSData(icsString) {
+            const lines = icsString.split(/\r\n|\n|\r/); 
+            let currentEv = null, newCourses = [];
+            
+            lines.forEach(line => {
+                if (line.startsWith('BEGIN:VEVENT')) { currentEv = {}; } 
+                else if (line.startsWith('END:VEVENT') && currentEv && currentEv.rawName) { newCourses.push(currentEv); currentEv = null; }
+                else if (currentEv) {
+                    if (line.startsWith('SUMMARY:')) {
+                        let summary = line.substring(8).trim();
+                        currentEv.rawName = summary;
+                        let codeMatch = summary.match(/(.*?)\s*\(([^)]+)\)$/);
+                        let fullCode = '';
+
+                        if (codeMatch) {
+                            fullCode = codeMatch[2].trim();
+                            currentEv.name = codeMatch[1].trim();
+                        } else {
+                            fullCode = summary;
+                            currentEv.name = summary;
+                        }
+
+                        let suffixMatch = fullCode.match(/^(.*)\.(\d+)$/);
+                        if (suffixMatch) {
+                            currentEv.code = suffixMatch[1];
+                            currentEv.isPractical = parseInt(suffixMatch[2]) >= 2;
+                            if (!codeMatch) currentEv.name = suffixMatch[1];
+                        } else {
+                            currentEv.code = codeMatch ? fullCode : '';
+                            currentEv.isPractical = summary.toLowerCase().includes('thực hành') || summary.match(/\bTH\b/);
+                        }
+                    } 
+                    else if (line.startsWith('LOCATION:')) currentEv.room = line.substring(9);
+                    else if (line.startsWith('DESCRIPTION:')) currentEv.desc = line.substring(12);
+                    else if (currentEv.desc !== undefined && !line.includes(':')) currentEv.desc += ' ' + line.trim();
+                    
+                    else if (line.startsWith('DTSTART')) {
+                        const tMatch = line.match(/T(\d{2})(\d{2})/); const dMatch = line.match(/(\d{4})(\d{2})(\d{2})T/);
+                        if (tMatch) currentEv.startMinTotal = parseInt(tMatch[1])*60 + parseInt(tMatch[2]);
+                        if (dMatch) {
+                            currentEv.year = parseInt(dMatch[1]); currentEv.month = parseInt(dMatch[2]) - 1; currentEv.date = parseInt(dMatch[3]);
+                            const wDay = new Date(currentEv.year, currentEv.month, currentEv.date).getDay(); currentEv.day = wDay === 0 ? 8 : wDay + 1;
+                            currentEv.dateStr = `${currentEv.year}-${String(currentEv.month+1).padStart(2,'0')}-${String(currentEv.date).padStart(2,'0')}`;
+                        }
+                    }
+                    else if (line.startsWith('DTEND')) { const tMatch = line.match(/T(\d{2})(\d{2})/); if (tMatch) currentEv.endMinTotal = parseInt(tMatch[1])*60 + parseInt(tMatch[2]); }
+                    else if (line.startsWith('RRULE:')) {
+                        const intMatch = line.match(/INTERVAL=(\d+)/); if (intMatch) currentEv.interval = parseInt(intMatch[1]);
+                        const untilMatch = line.match(/UNTIL=(\d{4})(\d{2})(\d{2})/); if (untilMatch) currentEv.until = new Date(parseInt(untilMatch[1]), parseInt(untilMatch[2])-1, parseInt(untilMatch[3]), 23, 59, 59);
+                        const countMatch = line.match(/COUNT=(\d+)/); if (countMatch) currentEv.count = parseInt(countMatch[1]);
+                    }
+                }
+            });
+
+            let parsedCount = 0;
+            newCourses.forEach((c) => {
+                if(!c.startMinTotal || !c.endMinTotal || c.day > 7 || !c.dateStr) return; 
+                
+                if(c.desc) {
+                    let descParsed = c.desc.replace(/\\n/g, ' ');
+                    let teacherMatch = descParsed.match(/(?:Giảng viên|GV|Teacher):\s*([^\\]+?)(?:\s|$)/i);
+                    if (teacherMatch) c.teacher = teacherMatch[1].trim();
+                }
+
+                let sPeriod = 1, ePeriod = 1;
+                for(let i=0; i<periods.length; i++) { 
+                    if(c.startMinTotal >= periods[i].startMin - 15) sPeriod = periods[i].p; 
+                    if(c.endMinTotal >= periods[i].startMin + 15) ePeriod = periods[i].p; 
+                }
+                const detectedType = c.isPractical ? 'TH' : 'LT'; 
+                const interval = c.interval || (c.isPractical ? 2 : 1);
+                
+                let activeDates = [c.dateStr];
+                if (interval > 1 || c.until || c.count || c.isPractical) {
+                    let curD = new Date(c.year, c.month, c.date); let count = 1; const maxSessions = c.count ? c.count : (c.until ? 999 : (interval === 2 ? 8 : 16));
+                    while (true) {
+                        curD.setDate(curD.getDate() + (interval * 7)); if (c.until && curD > c.until) break; if (count >= maxSessions) break;
+                        activeDates.push(`${curD.getFullYear()}-${String(curD.getMonth()+1).padStart(2,'0')}-${String(curD.getDate()).padStart(2,'0')}`); count++;
+                    }
+                }
+                const existing = state.courses.find(ex => (ex.name === c.name || (c.code && ex.code === c.code)) && ex.day === c.day && ex.startPeriod === sPeriod);
+                if(existing) {
+                    if(!existing.activeDates) existing.activeDates = []; activeDates.forEach(d => { if(!existing.activeDates.includes(d)) existing.activeDates.push(d); });
+                    if (detectedType === 'TH') { existing.type = 'TH'; existing.interval = interval; }
+                    if (c.code && !existing.code) existing.code = c.code;
+                    if (c.teacher && !existing.teacher) existing.teacher = c.teacher;
+                } else {
+                    state.courses.push({ id: 'ics_' + Date.now() + Math.random().toString(36).substr(2, 9), code: c.code || '', name: c.name, teacher: c.teacher || '', room: c.room || '', type: detectedType, credits: 0, day: c.day, startPeriod: sPeriod, endPeriod: ePeriod, color: COLORS[state.courses.length % COLORS.length], activeDates: activeDates, interval: interval }); parsedCount++;
+                }
+            });
+            
+            let map = new Map();
+            state.courses.forEach(c => {
+                let key = `${c.code||''}_${c.name}_${c.day}_${c.startPeriod}`;
+                if(map.has(key)) {
+                    let existing = map.get(key);
+                    if (c.activeDates && c.activeDates.length > 0) {
+                        if (!existing.activeDates) existing.activeDates = [];
+                        c.activeDates.forEach(d => { if (!existing.activeDates.includes(d)) existing.activeDates.push(d); });
+                    }
+                } else { map.set(key, c); }
+            });
+            state.courses = Array.from(map.values());
+
+            saveState(); closeModal('dataModalOverlay');
+            if(parsedCount > 0) showToast(`Quét thành công! Đã tự động bóc tách và phân tích ${parsedCount} sự kiện.`); 
+            else showToast(`Không tìm thấy sự kiện hợp lệ.`);
+        }
+
+        function initNotificationsSafe() {
+            try {
+                if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") { 
+                    Notification.requestPermission().catch(e => console.log("Thông báo bị chặn")); 
+                } 
+                setInterval(checkUpcomingClasses, 60000);
+            } catch (e) {
+                console.log("Môi trường không hỗ trợ Web Notification", e);
+            }
+        }
+
+        function toggleTheme() { state.theme = state.theme === 'dark' ? 'light' : 'dark'; applyTheme(); saveState(); }
+        function applyTheme() { document.body.className = state.theme === 'light' ? 'light-mode' : ''; }
+        function showToast(msg) {
+            const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg;
+            document.getElementById('toastContainer').appendChild(t); setTimeout(() => t.remove(), 2500);
+        }
+        window.onload = init;
+    </script>
+</body>
+</html>
