@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <!-- RẤT QUAN TRỌNG: Cấu hình cho App điện thoại (Viewport-fit=cover giúp tràn viền, user-scalable=no chống zoom loạn xạ) -->
+    <!-- Cấu hình chuẩn App điện thoại (Chống zoom loạn xạ, tràn viền) -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -49,7 +49,6 @@
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
         
-        /* FIX CHO IPHONE: Đẩy toàn bộ nội dung xuống dưới Tai thỏ/Dynamic Island */
         body { 
             background-color: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: row; overflow: hidden; transition: background-color 0.3s; 
             padding-top: env(safe-area-inset-top);
@@ -106,20 +105,22 @@
         /* Timetable View */
         #view-timetable { flex-direction: row; }
         .main-container { display: flex; flex: 1; overflow: hidden; width: 100%; }
-        .timetable-wrapper { flex: 1; overflow: auto; padding: 16px 24px; display: flex; flex-direction: column; align-items: center; position: relative;}
+        
+        /* BỎ PADDING THỪA Ở WRAPPER TRÁNH LỖI NHẢY ĐỊNH VỊ */
+        .timetable-wrapper { flex: 1; overflow: auto; padding: 0; display: flex; flex-direction: column; align-items: center; position: relative;}
         .sidebar { width: 340px; background-color: var(--panel); border-left: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; box-shadow: -4px 0 20px rgba(0,0,0,0.1); z-index: 10; }
         
-        .timetable-toolbar { display: flex; justify-content: center; align-items: center; padding: 12px 24px; gap: 16px; width: 100%; max-width: 1250px; background: var(--panel); border-radius: var(--radius-md); border: 1px solid var(--border); box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 16px; flex-shrink: 0;}
+        .timetable-toolbar { display: flex; justify-content: center; align-items: center; padding: 12px 24px; gap: 16px; width: 100%; max-width: 1250px; background: var(--panel); border-radius: var(--radius-md); border: 1px solid var(--border); margin-top: 16px; margin-bottom: 16px; flex-shrink: 0;}
         .week-label { font-size: 1rem; font-weight: 600; min-width: 220px; text-align: center; color: var(--primary); letter-spacing: -0.3px; }
 
         /* =========================================================
-           FIX LỖI GRID (LƯỚI LIỀN KHỐI CHỐNG TRÀN NỀN)
+           FIX LỖI GRID (LƯỚI LIỀN KHỐI CHỐNG TRÀN NỀN VÀ BÓNG)
            ========================================================= */
         .timetable { 
             display: grid; 
             grid-template-columns: 80px repeat(6, minmax(160px, 1fr)); 
             grid-template-rows: 45px repeat(15, minmax(85px, 1fr)); 
-            gap: 0; /* GAP BẰNG 0 ĐỂ CÁC Ô LIỀN KHỐI NHAU */
+            gap: 0; /* KHÔNG CÓ KHE HỞ */
             width: 100%; max-width: 1300px; height: fit-content; 
             padding-bottom: 80px; position: relative;
         }
@@ -128,13 +129,13 @@
             background-color: var(--panel); 
             display: flex; align-items: center; justify-content: center; 
             font-weight: 600; font-size: 0.85rem; color: var(--text-muted); 
-            border-bottom: 1px solid var(--border); 
+            border-bottom: 2px solid var(--border); 
             border-right: 1px solid var(--border);
             position: sticky; top: 0; z-index: 25; 
         }
         .grid-header:last-child { border-right: none; }
         
-        /* GÓC GIAO ĐIỂM BÊN TRÁI TRÊN CÙNG (QUAN TRỌNG: KHÔNG BAO GIỜ BỊ ĐÈ) */
+        /* GÓC GIAO ĐIỂM (CỐ ĐỊNH, KHÔNG ĐỔ BÓNG TRÁNH LỖI OVERLAP) */
         .grid-header:first-child { 
             position: sticky; top: 0; left: 0; z-index: 30; 
             border-right: 2px solid var(--border); 
@@ -143,8 +144,8 @@
         .grid-time { 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             font-size: 0.75rem; color: var(--text-muted); background: var(--panel); 
-            border-bottom: 1px solid var(--border); 
-            border-right: 2px solid var(--border); /* Viền đậm cách ly */
+            border-bottom: 1px dashed var(--border); 
+            border-right: 2px solid var(--border); /* Viền đậm cách ly, KHÔNG ĐỔ BÓNG */
             position: sticky; left: 0; z-index: 20;
         }
         .grid-time strong { font-size: 0.85rem; color: var(--text); font-weight: 700; margin-bottom: 2px; }
@@ -160,9 +161,9 @@
         .course-card { 
             border-radius: var(--radius-sm); padding: 10px; font-size: 0.8rem; color: #ffffff; cursor: pointer; 
             overflow: hidden; display: flex; flex-direction: column; z-index: 10; 
-            box-shadow: var(--shadow); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
             border: 1px solid rgba(255, 255, 255, 0.2); position: relative; 
-            margin: 2px; /* Sử dụng Margin thay cho Gap */
+            margin: 3px; /* Margin thay cho Grid Gap */
         }
         .course-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 100%; background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 100%); pointer-events: none; }
         .course-card:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 10px 25px rgba(0,0,0,0.5); filter: brightness(1.1); z-index: 15; }
@@ -380,14 +381,17 @@
             } 
             
             #view-timetable .main-container { flex-direction: column; overflow-y: auto; overflow-x: hidden; }
-            .timetable-wrapper { order: 1; width: 100%; height: 60vh; flex: none; overflow: auto; padding: 12px;}
+            .timetable-wrapper { order: 1; width: 100%; height: 60vh; flex: none; overflow: auto; padding: 0; /* Xóa Padding thừa để chống lỗi nhảy Sticky */ }
+            .timetable-toolbar { margin-top: 10px; margin-bottom: 10px; width: 95%; }
             .timetable { min-width: 800px; padding-bottom: 30px; position: relative;}
             
             .sidebar { width: 100%; order: 2; border-left: none; border-top: 1px solid var(--border); box-shadow: none; height: auto; overflow: visible;}
-
+            
             .dash-charts { grid-template-columns: 1fr; }
             .form-row { flex-direction: column; gap: 10px; }
-            .modal { max-height: 80vh; width: 92%; margin: 0 auto; }
+            /* Khắc phục lỗi che khuất Modal */
+            .modal { max-height: 80vh; width: 92%; margin: 0 auto; z-index: 2005; }
+            .modal-overlay { z-index: 2000; }
             .roadmap-grid { grid-template-columns: 1fr; }
             .profile-card { padding: 20px; }
             .profile-user-left { flex-direction: column; text-align: center; }
@@ -502,7 +506,7 @@
             </div>
         </div>
 
-        <!-- VIEW GOOGLE SHEET NHÚNG -->
+        <!-- VIEW GOOGLE SHEET NHÚNG (KẾ HOẠCH ĐẠI HỌC) -->
         <div id="view-sheet" class="view-section">
             <div class="sheet-container">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
@@ -955,22 +959,17 @@
         function renderGrid() {
             const week = getWeekRange(currentWeekOffset); document.getElementById('weekLabel').textContent = week.label; const grid = document.getElementById('timetableGrid');
             
-            // Render Headers
-            grid.innerHTML = `<div class="grid-header" style="z-index: 30; left: 0;">T.Gian \\ Thứ</div>` + 
+            // Xóa Đổ Bóng (Box-shadow) ở phần render HTML mới
+            grid.innerHTML = `<div class="grid-header" style="z-index: 30; left: 0;">Thời gian \\ Thứ</div>` + 
                              [2,3,4,5,6,7].map(d => `<div class="grid-header">Thứ ${d}</div>`).join('');
             
             periods.forEach((p, idx) => {
                 const timeParts = p.time.split(' - ');
-                // Render Time Column
                 grid.innerHTML += `<div class="grid-time" style="grid-row: ${idx+2}; grid-column: 1;">
                     <strong style="color: var(--text);">${timeParts[0]}</strong>
                     <span>${timeParts[1]}</span>
                 </div>`;
-                
-                // Render Cells
-                for (let d = 2; d <= 7; d++) { 
-                    grid.innerHTML += `<div class="grid-cell" style="grid-row: ${idx+2}; grid-column: ${d};" ondragover="event.preventDefault()" ondragenter="this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleDrop(event, ${d}, ${p.p})"></div>`; 
-                }
+                for (let d = 2; d <= 7; d++) { grid.innerHTML += `<div class="grid-cell" style="grid-row: ${idx+2}; grid-column: ${d};" ondragover="event.preventDefault()" ondragenter="this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleDrop(event, ${d}, ${p.p})"></div>`; }
             });
 
             const visibleCourses = state.courses.filter(c => {
@@ -985,7 +984,7 @@
                 const startTimeStr = periods[start-1].time.split(' - ')[0]; const endTimeStr = periods[end-1].time.split(' - ')[1];
 
                 const card = document.createElement('div'); card.className = `course-card`;
-                card.style.cssText = `grid-row: ${start + 1} / span ${end - start + 1}; grid-column: ${c.day}; background-color: ${c.color || COLORS[0]}; width: 100%; z-index: 10;`;
+                card.style.cssText = `grid-row: ${start + 1} / span ${end - start + 1}; grid-column: ${c.day}; background-color: ${c.color || COLORS[0]}; z-index: 10;`;
                 card.draggable = true; card.ondragstart = (e) => { e.dataTransfer.setData('text/plain', c.id); }; card.onclick = () => openCourseModal(c.id);
 
                 card.innerHTML = `
@@ -1287,7 +1286,7 @@
             else showToast(`Không tìm thấy sự kiện hợp lệ.`);
         }
 
-        // --- POMODORO CHỐNG CHẶN TRÌNH DUYỆT ---
+        // --- POMODORO ---
         let pomoTime = 25 * 60; let pomoInterval = null; let isPomoRunning = false; let currentPomoMode = 'focus';
         
         function updatePomoDisplay() {
@@ -1325,9 +1324,7 @@
                     btn.textContent = "Tạm dừng";
                 }
                 isPomoRunning = !isPomoRunning;
-            } catch (err) {
-                console.error("Lỗi Pomodoro:", err);
-            }
+            } catch (err) { console.error("Lỗi Pomodoro:", err); }
         }
         
         function resetPomo() { clearInterval(pomoInterval); isPomoRunning = false; document.getElementById('pomo-main-btn').textContent = "Bắt đầu"; const activeBtn = document.querySelector('.pomo-mode-btn.active'); if(activeBtn) activeBtn.click(); else setPomoMode(25, null, 'focus'); }
@@ -1346,9 +1343,9 @@
                 }
                 
                 const now = ctx.currentTime;
-                playTone(880, now, 0.4);             // Ding 1
-                playTone(1046.50, now + 0.25, 0.4);  // Ding 2 
-                playTone(1318.51, now + 0.5, 1.0);   // Ding 3 (Ngân)
+                playTone(880, now, 0.4);             
+                playTone(1046.50, now + 0.25, 0.4);  
+                playTone(1318.51, now + 0.5, 1.0);   
             } catch(e) { console.log("Trình duyệt không hỗ trợ AudioContext"); } 
         }
 
