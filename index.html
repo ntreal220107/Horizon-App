@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Horizon</title>
+    
     <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦉</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -55,8 +56,8 @@
         .left-nav { width: 260px; background-color: var(--panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 24px 16px; z-index: 30; flex-shrink: 0; box-shadow: 2px 0 15px rgba(0,0,0,0.1); }
         .brand { font-size: 1.4rem; font-weight: 800; color: var(--primary); margin-bottom: 24px; padding: 0 12px; display: flex; align-items: center; gap: 8px; letter-spacing: -0.5px; }
         
-        .launchpad { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 24px; padding: 0 8px; }
-        .launch-btn { background: var(--panel-light); border: 1px solid var(--border); border-radius: 8px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; color: var(--text); text-decoration: none; transition: 0.2s; }
+        .launchpad { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 24px; padding: 0 10px; }
+        .launch-btn { background: var(--panel-light); border: 1px solid var(--border); border-radius: 8px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: var(--text); text-decoration: none; transition: 0.2s; }
         .launch-btn:hover { background: var(--primary); color: #fff; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(56, 189, 248, 0.2); }
 
         .nav-item { padding: 12px 16px; margin-bottom: 8px; border-radius: var(--radius-sm); color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 0.95rem; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.2s ease; }
@@ -290,6 +291,39 @@
         .sync-icon { font-size: 1.2rem; cursor: pointer; transition: 0.2s; user-select: none; }
         .sync-icon.syncing { animation: spin 1s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* =========================================================
+           MOBILE RESPONSIVE DESIGN (GIAO DIỆN CHUẨN ĐIỆN THOẠI)
+           ========================================================= */
+        @media (max-width: 768px) {
+            body { flex-direction: column; overflow: auto; height: auto; min-height: 100vh;}
+            
+            /* Đẩy menu xuống dưới đáy màn hình */
+            .left-nav { order: 3; width: 100%; height: 70px; flex-direction: row; padding: 5px 10px; border-right: none; border-top: 1px solid var(--border); box-shadow: 0 -4px 15px rgba(0,0,0,0.2); position: fixed; bottom: 0; z-index: 100; justify-content: space-around; background: rgba(17, 24, 39, 0.95); backdrop-filter: blur(10px);}
+            .brand, .launchpad, .user-profile-mini { display: none; }
+            .nav-item { flex: 1; justify-content: center; padding: 10px; margin: 0; flex-direction: column; gap: 4px; }
+            .nav-item span { font-size: 1.5rem; margin: 0; }
+            .nav-item { font-size: 0; } /* Ẩn text, chỉ hiện Icon */
+            
+            .app-main { padding-bottom: 75px; } /* Chừa chỗ cho menu đáy */
+            
+            header { padding: 12px; flex-direction: column; gap: 10px; text-align: center; }
+            .header-left, .header-right { justify-content: center; width: 100%; flex-wrap: wrap;}
+            
+            /* Bảng lịch cho phép vuốt ngang */
+            #view-timetable .main-container { flex-direction: column; overflow: visible; }
+            .sidebar { width: 100%; order: 2; border-left: none; border-top: 1px solid var(--border); box-shadow: none; height: auto; max-height: none;}
+            .timetable-wrapper { order: 1; padding: 12px; overflow-x: auto; width: 100%;}
+            .timetable { min-width: 800px; }
+            
+            .dash-charts { grid-template-columns: 1fr; }
+            .form-row { flex-direction: column; gap: 10px; }
+            .modal { max-height: 85vh; width: 95%; margin: 10px auto; }
+            .roadmap-grid { grid-template-columns: 1fr; }
+            .profile-card { padding: 20px; }
+            .profile-user-left { flex-direction: column; text-align: center; }
+            .toast-container { bottom: 85px; right: 10px; left: 10px; }
+        }
     </style>
 </head>
 <body>
@@ -398,7 +432,7 @@
             </div>
         </div>
 
-        <!-- VIEW GOOGLE SHEET NHÚNG -->
+        <!-- VIEW GOOGLE SHEET NHÚNG (KẾ HOẠCH ĐẠI HỌC) -->
         <div id="view-sheet" class="view-section">
             <div class="sheet-container">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
@@ -616,8 +650,6 @@
                 </div>
                 <div class="form-group"><label>Màu hiển thị</label><div class="color-list" id="colorPicker"></div></div>
             </div>
-            
-            <!-- THÊM NÚT NHÂN BẢN SỰ KIỆN Ở ĐÂY -->
             <div class="modal-footer">
                 <button class="btn" id="btnDelete" style="color:var(--danger); display:none; margin-right:auto;" onclick="deleteCourse()">Xóa sự kiện</button>
                 <button class="btn" id="btnDuplicate" style="color:var(--primary); display:none;" onclick="duplicateCourse()">Nhân bản (Copy)</button>
@@ -633,30 +665,27 @@
          JAVASCRIPT & FIREBASE CLOUD SYNC LOGIC
          ============================================== -->
     <script>
-        // BƯỚC 1: DÁN CONFIG FIREBASE CỦA BẠN VÀO ĐÂY !!!
-        // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyD0cyj78JfsmfXTJjsH6t0yIXKsPW3HBBA",
-  authDomain: "horizon-app-992d5.firebaseapp.com",
-  databaseURL: "https://horizon-app-992d5-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "horizon-app-992d5",
-  storageBucket: "horizon-app-992d5.firebasestorage.app",
-  messagingSenderId: "1013614959467",
-  appId: "1:1013614959467:web:3b453c5f5e3af199894a2e"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+        // BƯỚC 1: DÁN CONFIG FIREBASE VÀO ĐÂY (ĐÃ BỌC LUỒNG AN TOÀN)
+        const firebaseConfig = {
+            apiKey: "AIzaSyD0cyj78JfsmfXTJjsH6t0yIXKsPW3HBBA",
+            authDomain: "horizon-app-992d5.firebaseapp.com",
+            databaseURL: "https://horizon-app-992d5-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "horizon-app-992d5",
+            storageBucket: "horizon-app-992d5.firebasestorage.app",
+            messagingSenderId: "1013614959467",
+            appId: "1:1013614959467:web:3b453c5f5e3af199894a2e"
+        };
         
-        // Khởi tạo Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
-        const DB_KEY = 'horizon_user_data_trieu'; // Tên thư mục trên cloud
+        let db = null;
+        try {
+            // Khởi tạo Firebase qua script CDN
+            firebase.initializeApp(firebaseConfig);
+            db = firebase.database();
+        } catch (error) {
+            console.error("Firebase Config Lỗi:", error);
+        }
+
+        const DB_KEY = 'horizon_user_data_trieu'; // Tên thư mục lưu trữ trên Database
 
         // --- CẤU TRÚC APP ---
         const STORAGE_KEY = 'tkb_desktop_app_data';
@@ -679,75 +708,69 @@ const app = initializeApp(firebaseConfig);
         let currentWeekOffset = 0; 
         let currentGoalFilter = 'all';
 
-        // --- KHỞI TẠO TỪ CLOUD ---
+        // --- KHỞI TẠO TỪ CLOUD HOẶC OFFLINE ---
         function init() {
+            if (!db) {
+                // Chạy Offline nếu lỗi kết nối
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) { state = { ...state, ...JSON.parse(saved) }; cleanUpData(); }
+                applyTheme(); renderAll(); renderProfile(); renderRoadmap();
+                showToast("Bạn đang dùng chế độ Offline 🚫☁️");
+                return;
+            }
+
             setSyncing(true);
             
             // Đọc dữ liệu từ Firebase
             db.ref(DB_KEY).once('value').then((snapshot) => {
                 const cloudData = snapshot.val();
-                
                 if (cloudData) {
                     state = { ...state, ...cloudData };
                     cleanUpData();
                     setSyncing(false);
-                    showToast("Đã lấy dữ liệu từ Đám mây ☁️");
+                    showToast("Đã đồng bộ từ Đám mây ☁️");
                 } else {
                     const saved = localStorage.getItem(STORAGE_KEY);
                     if (saved) { 
                         state = { ...state, ...JSON.parse(saved) }; 
                         cleanUpData();
-                        db.ref(DB_KEY).set(state); 
+                        db.ref(DB_KEY).set(state);
                     }
                     setSyncing(false);
                 }
-                
-                applyTheme(); renderAll(); renderProfile(); renderRoadmap(); initNotificationsSafe();
-                
+                applyTheme(); renderAll(); renderProfile(); renderRoadmap();
             }).catch(error => {
                 console.error("Firebase Error:", error);
                 setSyncing(false);
                 document.getElementById('cloud-sync-icon').textContent = '❌';
-                document.getElementById('cloud-sync-icon').title = 'Lỗi kết nối Cloud';
-                
-                // Backup chạy bằng Local nếu mất mạng
                 const saved = localStorage.getItem(STORAGE_KEY);
                 if (saved) { state = { ...state, ...JSON.parse(saved) }; cleanUpData(); }
-                applyTheme(); renderAll(); renderProfile(); renderRoadmap(); initNotificationsSafe();
+                applyTheme(); renderAll(); renderProfile(); renderRoadmap();
             });
         }
 
         // --- LƯU TRỮ LÊN CLOUD ---
         function saveState() { 
-            setSyncing(true);
             localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); 
-            
-            db.ref(DB_KEY).set(state).then(() => {
-                setSyncing(false);
-            }).catch(err => {
-                console.error("Lưu Cloud thất bại:", err);
-                setSyncing(false);
-                document.getElementById('cloud-sync-icon').textContent = '⚠️';
-            });
-            
-            renderAll(); 
-            renderRoadmap(); 
+            if (db) {
+                setSyncing(true);
+                db.ref(DB_KEY).set(state).then(() => {
+                    setSyncing(false);
+                }).catch(err => {
+                    console.error("Lưu Cloud thất bại:", err);
+                    setSyncing(false);
+                    document.getElementById('cloud-sync-icon').textContent = '⚠️';
+                });
+            }
+            renderAll(); renderRoadmap(); 
         }
 
-        function manualSync() {
-            showToast("Đang đồng bộ dữ liệu...");
-            init();
-        }
+        function manualSync() { showToast("Đang đồng bộ dữ liệu..."); init(); }
 
         function setSyncing(isSyncing) {
             const icon = document.getElementById('cloud-sync-icon');
-            if(isSyncing) {
-                icon.classList.add('syncing');
-                icon.textContent = '🔄';
-            } else {
-                icon.classList.remove('syncing');
-                icon.textContent = '☁️';
-            }
+            if(isSyncing) { icon.classList.add('syncing'); icon.textContent = '🔄'; } 
+            else { icon.classList.remove('syncing'); icon.textContent = '☁️'; }
         }
 
         function cleanUpData() {
@@ -762,7 +785,6 @@ const app = initializeApp(firebaseConfig);
                 if (isNaN(c.startPeriod) || c.startPeriod < 1) c.startPeriod = 1;
                 if (isNaN(c.endPeriod) || c.endPeriod > 15) c.endPeriod = 3;
                 if (isNaN(c.day) || !c.day) c.day = 2;
-                
                 let existing = cleanedCourses.find(ex => (ex.name === c.name || (c.code && ex.code === c.code)) && ex.day === c.day && ex.startPeriod === c.startPeriod);
                 if (existing) {
                     if (c.activeDates && c.activeDates.length > 0) {
@@ -774,6 +796,9 @@ const app = initializeApp(firebaseConfig);
             state.courses = cleanedCourses;
         }
 
+        // ==========================================
+        // CÁC HÀM XỬ LÝ GIAO DIỆN CHÍNH
+        // ==========================================
         function switchView(viewId, navElement) {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.getElementById(viewId).classList.add('active');
@@ -787,132 +812,70 @@ const app = initializeApp(firebaseConfig);
             if(viewId === 'view-profile') renderProfile(); 
         }
 
-        // Tín chỉ thủ công
-        function calculateCurrentCredits() {
-            let total = 0; state.courses.forEach(c => { total += parseInt(c.credits) || 0; });
-            return { total: total, uniqueCount: state.courses.length };
-        }
-        function updateHeaderCredits() {
-            const creditData = calculateCurrentCredits();
-            const headerCreditEl = document.getElementById('header-current-credits');
-            if(headerCreditEl) headerCreditEl.textContent = creditData.total;
-        }
+        function calculateCurrentCredits() { let total = 0; state.courses.forEach(c => { total += parseInt(c.credits) || 0; }); return { total: total, uniqueCount: state.courses.length }; }
+        function updateHeaderCredits() { const creditData = calculateCurrentCredits(); const headerCreditEl = document.getElementById('header-current-credits'); if(headerCreditEl) headerCreditEl.textContent = creditData.total; }
 
         // Profile
         function renderProfile() {
-            const name = state.profile.name || 'User';
-            const firstChar = name.trim().charAt(name.trim().lastIndexOf(' ') + 1) || name.charAt(0) || 'U';
-
-            document.getElementById('prof-inp-name').value = state.profile.name || '';
-            document.getElementById('prof-inp-role').value = state.profile.role || '';
-            document.getElementById('prof-inp-major').value = state.profile.major || '';
-            document.getElementById('prof-inp-email').value = state.profile.email || '';
-            document.getElementById('prof-inp-credits').value = state.profile.pastCredits || 0;
-            
+            const name = state.profile.name || 'User'; const firstChar = name.trim().charAt(name.trim().lastIndexOf(' ') + 1) || name.charAt(0) || 'U';
+            document.getElementById('prof-inp-name').value = state.profile.name || ''; document.getElementById('prof-inp-role').value = state.profile.role || '';
+            document.getElementById('prof-inp-major').value = state.profile.major || ''; document.getElementById('prof-inp-email').value = state.profile.email || ''; document.getElementById('prof-inp-credits').value = state.profile.pastCredits || 0;
             document.querySelectorAll('.profile-form input').forEach(inp => { inp.disabled = true; });
-            const btn = document.getElementById('btn-edit-profile');
-            if(btn) { btn.innerHTML = "✏️ Chỉnh sửa"; btn.classList.remove('btn-success'); btn.classList.add('btn-primary'); }
+            const btn = document.getElementById('btn-edit-profile'); if(btn) { btn.innerHTML = "✏️ Chỉnh sửa"; btn.classList.remove('btn-success'); btn.classList.add('btn-primary'); }
             
             document.getElementById('prof-display-name').textContent = name;
-            let displayMajor = state.profile.role || '';
-            if(state.profile.major) displayMajor += (displayMajor ? ' | ' : '') + state.profile.major;
-            document.getElementById('prof-display-major').textContent = displayMajor || 'Sinh viên';
-            document.getElementById('prof-display-avatar').textContent = firstChar;
-            document.getElementById('mini-prof-name').textContent = name;
-            document.getElementById('mini-prof-role').textContent = state.profile.role ? state.profile.role.split('/')[0] : 'User';
-            document.getElementById('mini-prof-avatar').textContent = firstChar;
+            let displayMajor = state.profile.role || ''; if(state.profile.major) displayMajor += (displayMajor ? ' | ' : '') + state.profile.major;
+            document.getElementById('prof-display-major').textContent = displayMajor || 'Sinh viên'; document.getElementById('prof-display-avatar').textContent = firstChar;
+            document.getElementById('mini-prof-name').textContent = name; document.getElementById('mini-prof-role').textContent = state.profile.role ? state.profile.role.split('/')[0] : 'User'; document.getElementById('mini-prof-avatar').textContent = firstChar;
         }
         function toggleProfileEdit() {
-            const btn = document.getElementById('btn-edit-profile');
-            const inputs = document.querySelectorAll('.profile-form input');
-
+            const btn = document.getElementById('btn-edit-profile'); const inputs = document.querySelectorAll('.profile-form input');
             if (btn.textContent.includes("Chỉnh sửa")) {
-                inputs.forEach(inp => { inp.disabled = false; });
-                btn.innerHTML = "💾 Lưu thông tin"; btn.classList.remove('btn-primary'); btn.classList.add('btn-success');
-                document.getElementById('prof-inp-name').focus();
+                inputs.forEach(inp => { inp.disabled = false; }); btn.innerHTML = "💾 Lưu thông tin"; btn.classList.remove('btn-primary'); btn.classList.add('btn-success'); document.getElementById('prof-inp-name').focus();
             } else {
-                state.profile.name = document.getElementById('prof-inp-name').value.trim() || 'User';
-                state.profile.role = document.getElementById('prof-inp-role').value.trim() || '';
-                state.profile.major = document.getElementById('prof-inp-major').value.trim() || '';
-                state.profile.email = document.getElementById('prof-inp-email').value.trim() || '';
-                state.profile.pastCredits = parseInt(document.getElementById('prof-inp-credits').value) || 0;
-
-                inputs.forEach(inp => { inp.disabled = true; });
-                btn.innerHTML = "✏️ Chỉnh sửa"; btn.classList.remove('btn-success'); btn.classList.add('btn-primary');
+                state.profile.name = document.getElementById('prof-inp-name').value.trim() || 'User'; state.profile.role = document.getElementById('prof-inp-role').value.trim() || '';
+                state.profile.major = document.getElementById('prof-inp-major').value.trim() || ''; state.profile.email = document.getElementById('prof-inp-email').value.trim() || ''; state.profile.pastCredits = parseInt(document.getElementById('prof-inp-credits').value) || 0;
+                inputs.forEach(inp => { inp.disabled = true; }); btn.innerHTML = "✏️ Chỉnh sửa"; btn.classList.remove('btn-success'); btn.classList.add('btn-primary');
                 saveState(); renderProfile(); showToast("Đã cập nhật thông tin thành công");
             }
         }
 
         // Dashboard
         function renderDashboard() {
-            const creditData = calculateCurrentCredits();
-            document.getElementById('dash-total-courses').textContent = creditData.uniqueCount;
-            const currentCredits = creditData.total;
-            const pastCredits = Number(state.profile.pastCredits) || 0;
-            document.getElementById('dash-total-credits').textContent = currentCredits + pastCredits;
-
+            const creditData = calculateCurrentCredits(); document.getElementById('dash-total-courses').textContent = creditData.uniqueCount;
+            const currentCredits = creditData.total; const pastCredits = Number(state.profile.pastCredits) || 0; document.getElementById('dash-total-credits').textContent = currentCredits + pastCredits;
             let dayCount = {2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0}; let totalPeriods = 0;
-            state.courses.forEach(c => { 
-                const p = (c.endPeriod - c.startPeriod + 1); const weight = (c.interval === 2) ? 0.5 : 1; 
-                dayCount[c.day] += p * weight; totalPeriods += p * weight; 
-            });
+            state.courses.forEach(c => { const p = (c.endPeriod - c.startPeriod + 1); const weight = (c.interval === 2) ? 0.5 : 1; dayCount[c.day] += p * weight; totalPeriods += p * weight; });
             document.getElementById('dash-total-periods').textContent = Math.round(totalPeriods);
-
             let maxDay = 2; let maxVal = -1;
             for(let d=2; d<=7; d++) { if(dayCount[d] > maxVal) { maxVal = dayCount[d]; maxDay = d; } }
-            if(state.courses.length > 0) {
-                document.getElementById('dash-busiest-day').textContent = `Thứ ${maxDay}`;
-                document.getElementById('dash-busiest-day').nextElementSibling.textContent = `Khoảng ${Math.round(maxVal)} tiết / tuần`;
+            if(state.courses.length > 0) { document.getElementById('dash-busiest-day').textContent = `Thứ ${maxDay}`; document.getElementById('dash-busiest-day').nextElementSibling.textContent = `Khoảng ${Math.round(maxVal)} tiết / tuần`;
             } else { document.getElementById('dash-busiest-day').textContent = `Trống`; }
-
             const chartDiv = document.getElementById('dash-bar-chart'); chartDiv.innerHTML = '';
             let chartMax = Math.max(...Object.values(dayCount), 10); 
-            for(let d=2; d<=7; d++) {
-                const val = dayCount[d]; const heightPercent = (val / chartMax) * 100;
-                chartDiv.innerHTML += `<div class="bar-col"><div class="bar-fill" style="height: ${heightPercent}%;"></div><div class="bar-label">T${d}</div></div>`;
-            }
+            for(let d=2; d<=7; d++) { const val = dayCount[d]; const heightPercent = (val / chartMax) * 100; chartDiv.innerHTML += `<div class="bar-col"><div class="bar-fill" style="height: ${heightPercent}%;"></div><div class="bar-label">T${d}</div></div>`; }
         }
 
         // Task
         function toggleTaskType() {
-            const type = document.getElementById('kTaskType').value;
-            const futureOpts = document.getElementById('kTaskFutureOptions');
+            const type = document.getElementById('kTaskType').value; const futureOpts = document.getElementById('kTaskFutureOptions');
             if (type === 'future') { futureOpts.style.display = 'flex'; } else {
-                futureOpts.style.display = 'none';
-                document.getElementById('newTaskDate').value = ''; document.getElementById('newTaskTime').value = ''; document.getElementById('newTaskRecurrence').value = 'once';
+                futureOpts.style.display = 'none'; document.getElementById('newTaskDate').value = ''; document.getElementById('newTaskTime').value = ''; document.getElementById('newTaskRecurrence').value = 'once';
             }
         }
         function renderTasks() {
             const container = document.getElementById('taskList');
             if (state.kanbanTasks.length === 0) { container.innerHTML = `<div style="font-size:0.8rem; color:var(--text-muted); padding:10px; font-style:italic;">Trống.</div>`; return; }
-            
-            const sortedTasks = [...state.kanbanTasks].sort((a, b) => {
-                if (a.done === b.done) return b.id - a.id;
-                return a.done ? 1 : -1;
-            });
-
+            const sortedTasks = [...state.kanbanTasks].sort((a, b) => { if (a.done === b.done) return b.id - a.id; return a.done ? 1 : -1; });
             container.innerHTML = sortedTasks.map(t => {
                 let badgeTime = '';
-                if (t.date || t.time) {
-                    let dt = []; if (t.date) { const dParts = t.date.split('-'); dt.push(`${dParts[2]}/${dParts[1]}/${dParts[0]}`); } if (t.time) dt.push(t.time);
-                    badgeTime = `<span class="task-badge badge-time" style="margin-bottom: 4px;">⏳ ${dt.join(' - ')}</span>`;
-                }
-                let badgeRec = '';
-                if (t.recurrence && t.recurrence !== 'once') {
-                    const recMap = { 'daily': 'Hằng ngày', 'weekly': 'Hằng tuần' };
-                    badgeRec = `<span class="task-badge badge-repeat" style="margin-bottom: 4px;">🔄 ${recMap[t.recurrence]}</span>`;
-                }
-
+                if (t.date || t.time) { let dt = []; if (t.date) { const dParts = t.date.split('-'); dt.push(`${dParts[2]}/${dParts[1]}/${dParts[0]}`); } if (t.time) dt.push(t.time); badgeTime = `<span class="task-badge badge-time" style="margin-bottom: 4px;">⏳ ${dt.join(' - ')}</span>`; }
+                let badgeRec = ''; if (t.recurrence && t.recurrence !== 'once') { const recMap = { 'daily': 'Hằng ngày', 'weekly': 'Hằng tuần' }; badgeRec = `<span class="task-badge badge-repeat" style="margin-bottom: 4px;">🔄 ${recMap[t.recurrence]}</span>`; }
                 return `
                 <div class="task-item pri-${t.pri} ${t.done ? 'done' : ''}">
                     <label class="task-checkbox-wrapper"><input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTask(${t.id})"><span class="task-checkmark"></span></label>
-                    <div class="task-content">
-                        <span class="task-text" style="${t.done ? 'text-decoration:line-through;color:var(--text-muted)' : ''}">${t.text}</span>
-                        ${(badgeTime || badgeRec) ? `<div class="task-meta">${badgeTime}${badgeRec}</div>` : ''}
-                    </div>
-                    <div class="task-controls">
-                        <button class="k-btn del" style="background: transparent; color: var(--danger); border: none; padding: 4px; display: flex; align-items: center;" onclick="delKTask(${t.id})">✕</button>
-                    </div>
+                    <div class="task-content"><span class="task-text" style="${t.done ? 'text-decoration:line-through;color:var(--text-muted)' : ''}">${t.text}</span>${(badgeTime || badgeRec) ? `<div class="task-meta">${badgeTime}${badgeRec}</div>` : ''}</div>
+                    <div class="task-controls"><button class="k-btn del" style="background: transparent; color: var(--danger); border: none; padding: 4px; display: flex; align-items: center;" onclick="delKTask(${t.id})">✕</button></div>
                 </div>`;
             }).join('');
         }
@@ -922,8 +885,7 @@ const app = initializeApp(firebaseConfig);
             if(!inp.value.trim()) return;
             state.kanbanTasks.push({ id: Date.now(), text: inp.value.trim(), pri: pri.value, date: dInp.value, time: tInp.value, recurrence: recInp ? recInp.value : 'once', done: false });
             inp.value = ''; dInp.value = ''; tInp.value = ''; if(recInp) recInp.value = 'once'; 
-            document.getElementById('kTaskType').value = 'upcoming'; toggleTaskType();
-            saveState();
+            document.getElementById('kTaskType').value = 'upcoming'; toggleTaskType(); saveState();
         }
         function toggleTask(id) { const task = state.kanbanTasks.find(t => t.id === id); if (task) { task.done = !task.done; saveState(); } }
         function delKTask(id) { state.kanbanTasks = state.kanbanTasks.filter(x => x.id !== id); saveState(); }
@@ -934,8 +896,7 @@ const app = initializeApp(firebaseConfig);
             const monday = new Date(now); monday.setDate(now.getDate() - day + 1 + (offset * 7)); monday.setHours(0,0,0,0);
             const sunday = new Date(monday); sunday.setDate(monday.getDate() + 6); sunday.setHours(23,59,59,999);
             const fmt = (d) => String(d.getDate()).padStart(2,'0') + '/' + String(d.getMonth()+1).padStart(2,'0');
-            let label = offset === 0 ? "Tuần này" : (offset > 0 ? "Tuần sau" : "Tuần trước");
-            return { start: monday, end: sunday, label: label + ` (${fmt(monday)} - ${fmt(sunday)})` };
+            let label = offset === 0 ? "Tuần này" : (offset > 0 ? "Tuần sau" : "Tuần trước"); return { start: monday, end: sunday, label: label + ` (${fmt(monday)} - ${fmt(sunday)})` };
         }
         function changeWeek(dir) { currentWeekOffset += dir; renderGrid(); }
         function resetWeek() { currentWeekOffset = 0; renderGrid(); }
@@ -943,41 +904,29 @@ const app = initializeApp(firebaseConfig);
         function renderAll() { document.getElementById('currentPlanName').textContent = state.planName; document.getElementById('noteInput').value = state.note || ''; updateHeaderCredits(); renderGrid(); renderSidebar(); renderTasks(); }
 
         function renderGrid() {
-            const week = getWeekRange(currentWeekOffset);
-            document.getElementById('weekLabel').textContent = week.label;
-            const grid = document.getElementById('timetableGrid');
+            const week = getWeekRange(currentWeekOffset); document.getElementById('weekLabel').textContent = week.label; const grid = document.getElementById('timetableGrid');
             grid.innerHTML = `<div class="grid-header">Thời gian \\ Thứ</div>` + [2,3,4,5,6,7].map(d => `<div class="grid-header">Thứ ${d}</div>`).join('');
             
             periods.forEach((p, idx) => {
                 const timeParts = p.time.split(' - ');
-                grid.innerHTML += `<div class="grid-time" style="grid-row: ${idx+2}; grid-column: 1; padding: 4px;">
-                    <strong style="font-size: 0.85rem; color: var(--text);">${timeParts[0]}</strong>
-                    <span style="font-size: 0.7rem; color: var(--text-muted);">${timeParts[1]}</span>
-                </div>`;
+                grid.innerHTML += `<div class="grid-time" style="grid-row: ${idx+2}; grid-column: 1; padding: 4px;"><strong style="font-size: 0.85rem; color: var(--text);">${timeParts[0]}</strong><span style="font-size: 0.7rem; color: var(--text-muted);">${timeParts[1]}</span></div>`;
                 for (let d = 2; d <= 7; d++) { grid.innerHTML += `<div class="grid-cell" style="grid-row: ${idx+2}; grid-column: ${d};" ondragover="event.preventDefault()" ondragenter="this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleDrop(event, ${d}, ${p.p})"></div>`; }
             });
 
             const visibleCourses = state.courses.filter(c => {
                 if (!c.activeDates || c.activeDates.length === 0) return true;
-                return c.activeDates.some(dStr => {
-                    const parts = dStr.split('-'); const d = new Date(parts[0], parts[1]-1, parts[2]); d.setHours(0,0,0,0);
-                    return d >= week.start && d <= week.end;
-                });
+                return c.activeDates.some(dStr => { const parts = dStr.split('-'); const d = new Date(parts[0], parts[1]-1, parts[2]); d.setHours(0,0,0,0); return d >= week.start && d <= week.end; });
             });
 
             visibleCourses.forEach(c => {
                 if (c.day > 7) return; 
-                
                 let start = Math.min(c.startPeriod, c.endPeriod); let end = Math.max(c.startPeriod, c.endPeriod);
                 if (isNaN(start) || start < 1) start = 1; if (isNaN(end) || end > 15) end = 15;
-                
                 const startTimeStr = periods[start-1].time.split(' - ')[0]; const endTimeStr = periods[end-1].time.split(' - ')[1];
 
                 const card = document.createElement('div'); card.className = `course-card`;
                 card.style.cssText = `grid-row: ${start + 1} / span ${end - start + 1}; grid-column: ${c.day}; background-color: ${c.color || COLORS[0]}; width: 100%; z-index: 10;`;
-                card.draggable = true;
-                card.ondragstart = (e) => { e.dataTransfer.setData('text/plain', c.id); };
-                card.onclick = () => openCourseModal(c.id);
+                card.draggable = true; card.ondragstart = (e) => { e.dataTransfer.setData('text/plain', c.id); }; card.onclick = () => openCourseModal(c.id);
 
                 card.innerHTML = `
                 <div style="display:flex; flex-direction:column; height: 100%;">
@@ -986,12 +935,10 @@ const app = initializeApp(firebaseConfig);
                         ${c.type ? `<span style="background: rgba(0,0,0,0.4); padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 800; border: 1px solid rgba(255,255,255,0.1);">${c.type}</span>` : ''}
                     </div>
                     <div style="font-size: 0.95rem; font-weight: 800; line-height: 1.35; margin-bottom: auto; text-shadow: 0 1px 3px rgba(0,0,0,0.4);">${c.name}</div>
-                    
                     <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 10px;">
                         ${c.teacher ? `<div style="font-size: 0.8rem; font-weight: 600; opacity: 0.95; display: flex; align-items: center; gap: 4px; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">👤 ${c.teacher}</div>` : ''}
                         <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.35); padding: 8px 10px; border-radius: 8px; font-size: 0.85rem; font-weight: 700; border: 1px solid rgba(255,255,255,0.08); box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);">
-                            <span style="display:flex; align-items:center; gap:4px;">📍 ${c.room || 'Chưa có'}</span>
-                            <span style="color: #fff; display:flex; align-items:center; gap:4px;">⏱ ${startTimeStr} - ${endTimeStr}</span>
+                            <span style="display:flex; align-items:center; gap:4px;">📍 ${c.room || 'Chưa có'}</span><span style="color: #fff; display:flex; align-items:center; gap:4px;">⏱ ${startTimeStr} - ${endTimeStr}</span>
                         </div>
                     </div>
                 </div>`;
@@ -1008,113 +955,59 @@ const app = initializeApp(firebaseConfig);
         }
 
         function renderSidebar() {
-            const date = new Date(); const days = ['Chủ Nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
-            const todayDay = date.getDay() === 0 ? 8 : date.getDay() + 1;
+            const date = new Date(); const days = ['Chủ Nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7']; const todayDay = date.getDay() === 0 ? 8 : date.getDay() + 1;
             document.getElementById('todayDateStr').textContent = `📅 ${days[date.getDay()]} · ${date.toLocaleDateString('vi-VN')}`;
             const todayStr = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
-            
             const todayClassesMap = new Map();
             state.courses.forEach(c => {
                 if(c.day !== todayDay) return;
                 if(c.activeDates && c.activeDates.length > 0 && !c.activeDates.includes(todayStr)) return;
-                const key = `${c.name}-${c.startPeriod}`;
-                if (!todayClassesMap.has(key)) todayClassesMap.set(key, c);
+                const key = `${c.name}-${c.startPeriod}`; if (!todayClassesMap.has(key)) todayClassesMap.set(key, c);
             });
             const todayClasses = Array.from(todayClassesMap.values()).sort((a,b) => a.startPeriod - b.startPeriod);
-            
             const container = document.getElementById('todayClasses');
             if (todayClasses.length === 0) container.innerHTML = `<span style="font-size:0.8rem; color:var(--text-muted); font-style:italic;">🎉 Hôm nay bạn không có lịch trình nào.</span>`;
             else container.innerHTML = todayClasses.map(c => {
-                let s = Math.min(c.startPeriod, c.endPeriod); if (isNaN(s) || s < 1) s = 1;
-                let e = Math.max(c.startPeriod, c.endPeriod); if (isNaN(e) || e > 15) e = 15;
+                let s = Math.min(c.startPeriod, c.endPeriod); if (isNaN(s) || s < 1) s = 1; let e = Math.max(c.startPeriod, c.endPeriod); if (isNaN(e) || e > 15) e = 15;
                 const sT = periods[s-1].time.split(' - ')[0]; const eT = periods[e-1].time.split(' - ')[1];
                 return `<div class="today-item" style="border-left-color:${c.color || 'var(--primary)'}"><strong>${c.name}</strong><div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">${c.room ? '📍 ' + c.room + ' • ' : ''}⏱ ${sT} - ${eT}</div></div>`;
             }).join('');
         }
 
-        // --- MỤC TIÊU LỘ TRÌNH (ROADMAP) ---
-        function filterGoals(cat, element) {
-            currentGoalFilter = cat;
-            document.querySelectorAll('#view-roadmap .k-tab').forEach(el => el.classList.remove('active'));
-            if(element) element.classList.add('active');
-            renderRoadmap();
-        }
-
-        function toggleGoalDate() {
-            const toggle = document.getElementById('goalDeadlineToggle').value;
-            const dateInp = document.getElementById('goalDate');
-            if(toggle === 'yes') { dateInp.style.display = 'block'; } else { dateInp.style.display = 'none'; dateInp.value = ''; }
-        }
+        // Roadmap
+        function filterGoals(cat, element) { currentGoalFilter = cat; document.querySelectorAll('#view-roadmap .k-tab').forEach(el => el.classList.remove('active')); if(element) element.classList.add('active'); renderRoadmap(); }
+        function toggleGoalDate() { const toggle = document.getElementById('goalDeadlineToggle').value; const dateInp = document.getElementById('goalDate'); if(toggle === 'yes') { dateInp.style.display = 'block'; } else { dateInp.style.display = 'none'; dateInp.value = ''; } }
 
         function renderRoadmap() {
-            const grid = document.getElementById('roadmapGrid');
-            if(!state.goals) state.goals = [];
-            
+            const grid = document.getElementById('roadmapGrid'); if(!state.goals) state.goals = [];
             let totalProgress = 0; let totalGoalsWeight = state.goals.length;
-            state.goals.forEach(g => {
-                if (g.subgoals && g.subgoals.length > 0) {
-                    const dones = g.subgoals.filter(s => s.done).length; totalProgress += (dones / g.subgoals.length);
-                } else { totalProgress += (g.status === 'done' ? 1 : 0); }
-            });
+            state.goals.forEach(g => { if (g.subgoals && g.subgoals.length > 0) { const dones = g.subgoals.filter(s => s.done).length; totalProgress += (dones / g.subgoals.length); } else { totalProgress += (g.status === 'done' ? 1 : 0); } });
             const pct = totalGoalsWeight === 0 ? 0 : Math.round((totalProgress / totalGoalsWeight) * 100);
-            
-            document.getElementById('roadmap-pct-text').textContent = `${pct}%`;
-            document.getElementById('roadmap-pct-bar').style.width = `${pct}%`;
-
-            let filtered = state.goals;
-            if(currentGoalFilter !== 'all') { filtered = state.goals.filter(g => g.cat === currentGoalFilter); }
-
-            let sorted = [...filtered].sort((a,b) => {
-                const mapScore = { 'todo': 0, 'doing': 1, 'done': 2 };
-                const aS = mapScore[a.status || 'todo']; const bS = mapScore[b.status || 'todo'];
-                if(aS !== bS) return aS - bS; 
-                if(a.date && b.date) return a.date.localeCompare(b.date);
-                return b.id - a.id;
-            });
-
+            document.getElementById('roadmap-pct-text').textContent = `${pct}%`; document.getElementById('roadmap-pct-bar').style.width = `${pct}%`;
+            let filtered = state.goals; if(currentGoalFilter !== 'all') { filtered = state.goals.filter(g => g.cat === currentGoalFilter); }
+            let sorted = [...filtered].sort((a,b) => { const mapScore = { 'todo': 0, 'doing': 1, 'done': 2 }; const aS = mapScore[a.status || 'todo']; const bS = mapScore[b.status || 'todo']; if(aS !== bS) return aS - bS; if(a.date && b.date) return a.date.localeCompare(b.date); return b.id - a.id; });
             if(sorted.length === 0) { grid.innerHTML = `<p style="color:var(--text-muted); grid-column: 1 / -1;">Chưa có mục tiêu nào trong mục này. Hãy thêm ở phía trên nhé!</p>`; return; }
 
             grid.innerHTML = sorted.map(g => {
-                let catClass = 'cat-prog'; let catLabel = 'Lập trình';
-                if(g.cat === 'lang') { catClass = 'cat-lang'; catLabel = 'Ngoại ngữ'; }
-                if(g.cat === 'career') { catClass = 'cat-career'; catLabel = 'Sự nghiệp'; }
-                
-                let priClass = 'goal-pri-med'; let priLabel = 'Ưu tiên: Vừa';
-                if(g.priority === 'high') { priClass = 'goal-pri-high'; priLabel = '🔥 Quan trọng'; }
-                if(g.priority === 'low') { priClass = 'goal-pri-low'; priLabel = '💡 Ưu tiên: Thấp'; }
-
-                let dateStr = '♾️ Dài hạn';
-                if(g.hasDeadline && g.date) { const d = g.date.split('-'); dateStr = `⏳ Deadline: ${d[2]}/${d[1]}/${d[0]}`; }
+                let catClass = 'cat-prog'; let catLabel = 'Lập trình'; if(g.cat === 'lang') { catClass = 'cat-lang'; catLabel = 'Ngoại ngữ'; } if(g.cat === 'career') { catClass = 'cat-career'; catLabel = 'Sự nghiệp'; }
+                let priClass = 'goal-pri-med'; let priLabel = 'Ưu tiên: Vừa'; if(g.priority === 'high') { priClass = 'goal-pri-high'; priLabel = '🔥 Quan trọng'; } if(g.priority === 'low') { priClass = 'goal-pri-low'; priLabel = '💡 Ưu tiên: Thấp'; }
+                let dateStr = '♾️ Dài hạn'; if(g.hasDeadline && g.date) { const d = g.date.split('-'); dateStr = `⏳ Deadline: ${d[2]}/${d[1]}/${d[0]}`; }
 
                 let gPct = 0; let subgoalsHTML = '';
                 if(g.subgoals && g.subgoals.length > 0) {
-                    const sDones = g.subgoals.filter(s => s.done).length;
-                    gPct = Math.round((sDones / g.subgoals.length) * 100);
-                    subgoalsHTML = `<div class="goal-sub-list">` + 
-                        g.subgoals.map(s => `
-                            <label class="goal-sub-item">
-                                <input type="checkbox" ${s.done ? 'checked' : ''} onchange="toggleSubgoal(${g.id}, ${s.id})">
-                                <span style="${s.done ? 'text-decoration:line-through; color:var(--text-muted);' : ''}">${s.text}</span>
-                            </label>
-                        `).join('') + `</div>`;
+                    const sDones = g.subgoals.filter(s => s.done).length; gPct = Math.round((sDones / g.subgoals.length) * 100);
+                    subgoalsHTML = `<div class="goal-sub-list">` + g.subgoals.map(s => `<label class="goal-sub-item"><input type="checkbox" ${s.done ? 'checked' : ''} onchange="toggleSubgoal(${g.id}, ${s.id})"><span style="${s.done ? 'text-decoration:line-through; color:var(--text-muted);' : ''}">${s.text}</span></label>`).join('') + `</div>`;
                 } else { gPct = (g.status === 'done') ? 100 : 0; }
 
                 return `
                 <div class="goal-card status-${g.status || 'todo'}">
-                    <div>
-                        <div class="goal-header">
-                            <span class="goal-cat ${catClass}">${catLabel}</span>
-                            <span class="${priClass}">${priLabel}</span>
-                        </div>
+                    <div><div class="goal-header"><span class="goal-cat ${catClass}">${catLabel}</span><span class="${priClass}">${priLabel}</span></div>
                         <div class="goal-title" style="${g.status === 'done' ? 'text-decoration:line-through; color:var(--text-muted)' : ''}">${g.title}</div>
                         <div class="goal-meta">${dateStr} • <span>Tiến độ: ${gPct}%</span></div>
-                        <div class="goal-progress-mini"><div class="goal-progress-mini-fill" style="width: ${gPct}%;"></div></div>
-                        ${subgoalsHTML}
+                        <div class="goal-progress-mini"><div class="goal-progress-mini-fill" style="width: ${gPct}%;"></div></div>${subgoalsHTML}
                     </div>
                     <div class="goal-actions">
-                        <button class="status-btn ${g.status === 'todo' ? 'active' : ''} s-todo" onclick="updateGoalStatus(${g.id}, 'todo')">Tạm hoãn</button>
-                        <button class="status-btn ${g.status === 'doing' ? 'active' : ''} s-doing" onclick="updateGoalStatus(${g.id}, 'doing')">Đang cày ⏳</button>
-                        <button class="status-btn ${g.status === 'done' ? 'active' : ''} s-done" onclick="updateGoalStatus(${g.id}, 'done')">Xong ✓</button>
+                        <button class="status-btn ${g.status === 'todo' ? 'active' : ''} s-todo" onclick="updateGoalStatus(${g.id}, 'todo')">Tạm hoãn</button><button class="status-btn ${g.status === 'doing' ? 'active' : ''} s-doing" onclick="updateGoalStatus(${g.id}, 'doing')">Đang cày ⏳</button><button class="status-btn ${g.status === 'done' ? 'active' : ''} s-done" onclick="updateGoalStatus(${g.id}, 'done')">Xong ✓</button>
                     </div>
                     <button class="icon-btn" style="position: absolute; bottom: 20px; right: 20px; color:var(--danger); padding:4px; border:none; background:rgba(244, 63, 94, 0.1);" onclick="deleteGoal(${g.id})" title="Xóa mục tiêu">✕</button>
                 </div>`;
@@ -1122,54 +1015,19 @@ const app = initializeApp(firebaseConfig);
         }
 
         function addGoal() {
-            const title = document.getElementById('goalTitle').value.trim(); const cat = document.getElementById('goalCat').value; 
-            const priority = document.getElementById('goalPri').value; const hasDeadline = document.getElementById('goalDeadlineToggle').value === 'yes';
-            const date = document.getElementById('goalDate').value; const subtext = document.getElementById('goalSubtasks').value.trim();
-
+            const title = document.getElementById('goalTitle').value.trim(); const cat = document.getElementById('goalCat').value; const priority = document.getElementById('goalPri').value; const hasDeadline = document.getElementById('goalDeadlineToggle').value === 'yes'; const date = document.getElementById('goalDate').value; const subtext = document.getElementById('goalSubtasks').value.trim();
             if(!title) return alert("Vui lòng nhập tên mục tiêu!");
-            
             let subgoals = [];
-            if(subtext) {
-                const lines = subtext.split('\n');
-                lines.forEach((l, idx) => {
-                    let text = l.trim();
-                    if(text.startsWith('-') || text.startsWith('+') || text.startsWith('*') || text.match(/^\d+\./)) { text = text.replace(/^[-+*]\s*/, '').replace(/^\d+\.\s*/, ''); }
-                    if(text) subgoals.push({ id: Date.now() + idx, text: text, done: false });
-                });
-            }
-
-            if(!state.goals) state.goals = [];
-            state.goals.push({ id: Date.now(), title, cat, priority, hasDeadline, date, status: 'todo', subgoals: subgoals });
-            
-            document.getElementById('goalTitle').value = ''; document.getElementById('goalDate').value = ''; document.getElementById('goalSubtasks').value = '';
-            document.getElementById('goalDeadlineToggle').value = 'no'; toggleGoalDate();
-            saveState(); showToast("Đã khởi tạo lộ trình mới");
+            if(subtext) { const lines = subtext.split('\n'); lines.forEach((l, idx) => { let text = l.trim(); if(text.startsWith('-') || text.startsWith('+') || text.startsWith('*') || text.match(/^\d+\./)) { text = text.replace(/^[-+*]\s*/, '').replace(/^\d+\.\s*/, ''); } if(text) subgoals.push({ id: Date.now() + idx, text: text, done: false }); }); }
+            if(!state.goals) state.goals = []; state.goals.push({ id: Date.now(), title, cat, priority, hasDeadline, date, status: 'todo', subgoals: subgoals });
+            document.getElementById('goalTitle').value = ''; document.getElementById('goalDate').value = ''; document.getElementById('goalSubtasks').value = ''; document.getElementById('goalDeadlineToggle').value = 'no'; toggleGoalDate(); saveState(); showToast("Đã khởi tạo lộ trình mới");
         }
 
-        function updateGoalStatus(id, newStatus) {
-            const g = state.goals.find(x => x.id === id); 
-            if(g) { 
-                g.status = newStatus;
-                if (newStatus === 'done' && g.subgoals) { g.subgoals.forEach(s => s.done = true); }
-                saveState(); 
-            } 
-        }
-
-        function toggleSubgoal(goalId, subId) {
-            const g = state.goals.find(x => x.id === goalId);
-            if(g && g.subgoals) {
-                const s = g.subgoals.find(x => x.id === subId);
-                if(s) {
-                    s.done = !s.done;
-                    const allDone = g.subgoals.every(sub => sub.done); const anyDone = g.subgoals.some(sub => sub.done);
-                    if(allDone) g.status = 'done'; else if(anyDone) g.status = 'doing'; else g.status = 'todo';
-                    saveState();
-                }
-            }
-        }
+        function updateGoalStatus(id, newStatus) { const g = state.goals.find(x => x.id === id); if(g) { g.status = newStatus; if (newStatus === 'done' && g.subgoals) { g.subgoals.forEach(s => s.done = true); } saveState(); } }
+        function toggleSubgoal(goalId, subId) { const g = state.goals.find(x => x.id === goalId); if(g && g.subgoals) { const s = g.subgoals.find(x => x.id === subId); if(s) { s.done = !s.done; const allDone = g.subgoals.every(sub => sub.done); const anyDone = g.subgoals.some(sub => sub.done); if(allDone) g.status = 'done'; else if(anyDone) g.status = 'doing'; else g.status = 'todo'; saveState(); } } }
         function deleteGoal(id) { if(confirm("Bạn có chắc muốn xóa mục tiêu này khỏi lộ trình?")) { state.goals = state.goals.filter(x => x.id !== id); saveState(); } }
 
-        // --- POMODORO (ĐÃ SỬA LỖI & THÊM ÂM THANH CHUẨN) ---
+        // --- POMODORO NÂNG CẤP CHỐNG CHẶN TRÌNH DUYỆT ---
         let pomoTime = 25 * 60; let pomoInterval = null; let isPomoRunning = false; let currentPomoMode = 'focus';
         
         function updatePomoDisplay() {
@@ -1199,7 +1057,6 @@ const app = initializeApp(firebaseConfig);
                             btn.textContent = "Bắt đầu"; 
                             isPomoRunning = false; 
                             
-                            // Phát âm thanh khi hết giờ
                             playPomoSound();
                             
                             setTimeout(() => {
@@ -1257,96 +1114,57 @@ const app = initializeApp(firebaseConfig);
             if(target) target.classList.add('selected');
         }
 
-        // --- MODAL COURSE KÈM TÍNH NĂNG NHÂN BẢN ---
         function openCourseModal(id = null) {
             document.getElementById('courseModalOverlay').classList.add('active');
             const selColor = id ? (state.courses.find(x => x.id === id).color || COLORS[0]) : COLORS[0];
             document.getElementById('colorPicker').innerHTML = COLORS.map(c => `<div class="color-circle ${c === selColor ? 'selected' : ''}" style="background:${c}" onclick="document.querySelectorAll('.color-circle').forEach(el=>el.classList.remove('selected')); this.classList.add('selected');" data-color="${c}"></div>`).join('');
 
             if (id) {
-                const c = state.courses.find(x => x.id === id);
-                document.getElementById('modalTitle').textContent = 'Sửa Lịch Trình';
-                document.getElementById('courseId').value = c.id; 
-                document.getElementById('courseCode').value = c.code || ''; 
-                document.getElementById('courseName').value = c.name || '';
-                document.getElementById('courseTeacher').value = c.teacher || ''; 
-                document.getElementById('courseRoom').value = c.room || ''; 
-                document.getElementById('courseDay').value = c.day || 2;
-                document.getElementById('courseStart').value = c.startPeriod || 1; 
-                document.getElementById('courseEnd').value = c.endPeriod || 3;
-                document.getElementById('courseType').value = c.type || ''; 
-                document.getElementById('courseCredits').value = c.credits || 0; 
-                document.getElementById('courseInterval').value = c.interval || 1;
-                
-                if (c.activeDates && c.activeDates.length > 0) { 
-                    let sorted = [...c.activeDates].sort(); 
-                    document.getElementById('courseStartDate').value = formatDateToVN(sorted[0]); 
-                    document.getElementById('courseEndDate').value = formatDateToVN(sorted[sorted.length - 1]); 
-                } else { document.getElementById('courseStartDate').value = ''; document.getElementById('courseEndDate').value = ''; }
-                
-                document.getElementById('btnDelete').style.display = 'block';
-                document.getElementById('btnDuplicate').style.display = 'block'; // Hiện nút Nhân bản
+                const c = state.courses.find(x => x.id === id); document.getElementById('modalTitle').textContent = 'Sửa Lịch Trình'; document.getElementById('courseId').value = c.id; 
+                document.getElementById('courseCode').value = c.code || ''; document.getElementById('courseName').value = c.name || ''; document.getElementById('courseTeacher').value = c.teacher || ''; document.getElementById('courseRoom').value = c.room || ''; 
+                document.getElementById('courseDay').value = c.day || 2; document.getElementById('courseStart').value = c.startPeriod || 1; document.getElementById('courseEnd').value = c.endPeriod || 3;
+                document.getElementById('courseType').value = c.type || ''; document.getElementById('courseCredits').value = c.credits || 0; document.getElementById('courseInterval').value = c.interval || 1;
+                if (c.activeDates && c.activeDates.length > 0) { let sorted = [...c.activeDates].sort(); document.getElementById('courseStartDate').value = formatDateToVN(sorted[0]); document.getElementById('courseEndDate').value = formatDateToVN(sorted[sorted.length - 1]); } else { document.getElementById('courseStartDate').value = ''; document.getElementById('courseEndDate').value = ''; }
+                document.getElementById('btnDelete').style.display = 'block'; document.getElementById('btnDuplicate').style.display = 'block'; // Hiện nút Nhân bản
             } else {
-                document.getElementById('modalTitle').textContent = 'Thêm sự kiện / môn học';
-                document.getElementById('courseId').value = ''; 
-                document.getElementById('courseCode').value = ''; 
-                document.getElementById('courseName').value = '';
-                document.getElementById('courseTeacher').value = ''; 
-                document.getElementById('courseRoom').value = ''; 
-                document.getElementById('courseDay').value = '2'; 
-                document.getElementById('courseStart').value = '1'; 
-                document.getElementById('courseEnd').value = '3'; 
-                document.getElementById('courseType').value = 'LT'; 
-                document.getElementById('courseCredits').value = '0'; 
-                document.getElementById('courseInterval').value = '1'; 
-                
-                let now = new Date(); const dayOffset = now.getDay() === 0 ? -6 : 1 - now.getDay(); now.setDate(now.getDate() + dayOffset);
-                let end = new Date(now); end.setDate(end.getDate() + 105); 
-                document.getElementById('courseStartDate').value = formatDateToVN(now.toISOString().split('T')[0]); 
-                document.getElementById('courseEndDate').value = formatDateToVN(end.toISOString().split('T')[0]);
-                
-                document.getElementById('btnDelete').style.display = 'none';
-                document.getElementById('btnDuplicate').style.display = 'none'; // Ẩn nút Nhân bản khi tạo mới
+                document.getElementById('modalTitle').textContent = 'Thêm sự kiện / môn học'; document.getElementById('courseId').value = ''; 
+                document.getElementById('courseCode').value = ''; document.getElementById('courseName').value = ''; document.getElementById('courseTeacher').value = ''; document.getElementById('courseRoom').value = ''; 
+                document.getElementById('courseDay').value = '2'; document.getElementById('courseStart').value = '1'; document.getElementById('courseEnd').value = '3'; document.getElementById('courseType').value = 'LT'; document.getElementById('courseCredits').value = '0'; document.getElementById('courseInterval').value = '1'; 
+                let now = new Date(); const dayOffset = now.getDay() === 0 ? -6 : 1 - now.getDay(); now.setDate(now.getDate() + dayOffset); let end = new Date(now); end.setDate(end.getDate() + 105); 
+                document.getElementById('courseStartDate').value = formatDateToVN(now.toISOString().split('T')[0]); document.getElementById('courseEndDate').value = formatDateToVN(end.toISOString().split('T')[0]);
+                document.getElementById('btnDelete').style.display = 'none'; document.getElementById('btnDuplicate').style.display = 'none'; // Ẩn nút Nhân bản khi tạo mới
             }
         }
-        
-        // Hàm Nhân bản sự kiện (Chỉ đổi thứ và lưu lại)
+
+        // TÍNH NĂNG NHÂN BẢN
         function duplicateCourse() {
-            document.getElementById('courseId').value = ''; // Xóa ID cũ để khi Save sẽ tạo thẻ mới
+            document.getElementById('courseId').value = ''; 
             document.getElementById('modalTitle').textContent = 'Nhân bản sự kiện';
             document.getElementById('courseName').value += ' (Bản sao)';
             document.getElementById('btnDelete').style.display = 'none';
             document.getElementById('btnDuplicate').style.display = 'none';
-            showToast("Đã copy! Hãy chọn Thứ/Giờ mới và bấm Lưu lại.");
+            showToast("Đã nhân bản! Hãy đổi Thứ/Giờ và bấm Lưu lại.");
         }
-
+        
         function saveCourse() {
             const id = document.getElementById('courseId').value; const name = document.getElementById('courseName').value.trim();
             if (!name) return alert("Vui lòng nhập tên sự kiện!");
             let start = parseInt(document.getElementById('courseStart').value); let end = parseInt(document.getElementById('courseEnd').value);
             if (isNaN(start) || start < 1) start = 1; if (isNaN(end) || end > 15) end = 15;
             if (start > end) return alert("Giờ bắt đầu không thể lớn hơn giờ kết thúc!");
-            
             const colorEl = document.querySelector('.color-circle.selected'); const color = colorEl ? colorEl.dataset.color : COLORS[0];
             const interval = parseInt(document.getElementById('courseInterval').value) || 1; const dayOfWeek = parseInt(document.getElementById('courseDay').value);
             const startDateStr = parseVNToDate(document.getElementById('courseStartDate').value); const endDateStr = parseVNToDate(document.getElementById('courseEndDate').value);
             
             let activeDates = [];
             if (startDateStr && endDateStr && startDateStr.length === 10 && endDateStr.length === 10) {
-                let curD = new Date(startDateStr.split('-')[0], startDateStr.split('-')[1] - 1, startDateStr.split('-')[2]);
-                const endD = new Date(endDateStr.split('-')[0], endDateStr.split('-')[1] - 1, endDateStr.split('-')[2]);
+                let curD = new Date(startDateStr.split('-')[0], startDateStr.split('-')[1] - 1, startDateStr.split('-')[2]); const endD = new Date(endDateStr.split('-')[0], endDateStr.split('-')[1] - 1, endDateStr.split('-')[2]);
                 const targetDay = dayOfWeek === 8 ? 0 : dayOfWeek - 1; 
                 while (curD.getDay() !== targetDay && curD <= endD) { curD.setDate(curD.getDate() + 1); }
                 while (curD <= endD) { activeDates.push(`${curD.getFullYear()}-${String(curD.getMonth()+1).padStart(2,'0')}-${String(curD.getDate()).padStart(2,'0')}`); curD.setDate(curD.getDate() + (interval * 7)); }
             } else if (id) { const oldCourse = state.courses.find(c => c.id === id); if(oldCourse && oldCourse.activeDates) activeDates = oldCourse.activeDates; }
 
-            const data = {
-                id: id || 'c_' + Date.now(), code: document.getElementById('courseCode').value, name: name.replace(' (Bản sao)', ''), 
-                teacher: document.getElementById('courseTeacher').value, room: document.getElementById('courseRoom').value,
-                day: dayOfWeek, startPeriod: start, endPeriod: end, color, type: document.getElementById('courseType').value, 
-                credits: parseInt(document.getElementById('courseCredits').value) || 0,
-                interval: interval, activeDates: activeDates
-            };
+            const data = { id: id || 'c_' + Date.now(), code: document.getElementById('courseCode').value, name: name.replace(' (Bản sao)', ''), teacher: document.getElementById('courseTeacher').value, room: document.getElementById('courseRoom').value, day: dayOfWeek, startPeriod: start, endPeriod: end, color, type: document.getElementById('courseType').value, credits: parseInt(document.getElementById('courseCredits').value) || 0, interval: interval, activeDates: activeDates };
             if (id) state.courses[state.courses.findIndex(c => c.id === id)] = data; else state.courses.push(data);
             closeModal('courseModalOverlay'); saveState(); showToast(id ? "Đã cập nhật thành công" : "Đã thêm vào lịch trình");
         }
@@ -1565,15 +1383,37 @@ const app = initializeApp(firebaseConfig);
             else showToast(`Không tìm thấy sự kiện hợp lệ.`);
         }
 
-        function initNotificationsSafe() {
-            try {
-                if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") { 
-                    Notification.requestPermission().catch(e => console.log("Thông báo bị chặn")); 
-                } 
-                setInterval(checkUpcomingClasses, 60000);
-            } catch (e) {
-                console.log("Môi trường không hỗ trợ Web Notification", e);
-            }
+        // --- GPA LOGIC ---
+        function openGPAModal() { document.getElementById('gpaModalOverlay').classList.add('active'); renderGpaTable(); }
+        function renderGpaTable() {
+            if(!state.gpaData || state.gpaData.length === 0) { state.gpaData = [{id: Date.now(), name:'', credits:3, q:0, g:0, c:0, w:50}]; }
+            document.getElementById('gpaTbody').innerHTML = state.gpaData.map((r, i) => `
+                <tr>
+                    <td><input type="text" placeholder="Tên môn..." value="${r.name}" oninput="state.gpaData[${i}].name=this.value"></td>
+                    <td><input type="number" min="1" max="10" value="${r.credits}" oninput="state.gpaData[${i}].credits=Number(this.value)"></td>
+                    <td><input type="number" min="0" max="10" step="0.1" value="${r.q}" oninput="state.gpaData[${i}].q=Number(this.value)"></td>
+                    <td><input type="number" min="0" max="10" step="0.1" value="${r.g}" oninput="state.gpaData[${i}].g=Number(this.value)"></td>
+                    <td><input type="number" min="0" max="10" step="0.1" value="${r.c}" oninput="state.gpaData[${i}].c=Number(this.value)"></td>
+                    <td><input type="number" min="0" max="100" value="${r.w}" oninput="state.gpaData[${i}].w=Number(this.value)"></td>
+                    <td><button class="icon-btn" style="color:var(--danger);" onclick="delGpaRow(${i})">✕</button></td>
+                </tr>
+            `).join('');
+        }
+        function addGpaRow() { state.gpaData.push({id: Date.now(), name:'', credits:3, q:0, g:0, c:0, w:50}); renderGpaTable(); }
+        function delGpaRow(idx) { state.gpaData.splice(idx, 1); renderGpaTable(); }
+        function calcGPA() {
+            let totalCredits = 0; let totalScore10 = 0; let totalScore4 = 0;
+            state.gpaData.forEach(r => {
+                if(!r.credits) return;
+                const finalScore = (r.q * 0.2) + (r.g * ((100 - 20 - r.w)/100)) + (r.c * (r.w/100));
+                let score4 = 0;
+                if(finalScore >= 8.5) score4 = 4.0; else if(finalScore >= 8.0) score4 = 3.5; else if(finalScore >= 7.0) score4 = 3.0; else if(finalScore >= 6.5) score4 = 2.5; else if(finalScore >= 5.5) score4 = 2.0; else if(finalScore >= 5.0) score4 = 1.5; else if(finalScore >= 4.0) score4 = 1.0;
+                totalCredits += r.credits; totalScore10 += (finalScore * r.credits); totalScore4 += (score4 * r.credits);
+            });
+            document.getElementById('res-credits').textContent = totalCredits;
+            document.getElementById('res-gpa10').textContent = totalCredits > 0 ? (totalScore10 / totalCredits).toFixed(2) : "0.00";
+            document.getElementById('res-gpa4').textContent = totalCredits > 0 ? (totalScore4 / totalCredits).toFixed(2) : "0.00";
+            saveState(); showToast("Đã tính xong điểm GPA");
         }
 
         function toggleTheme() { state.theme = state.theme === 'dark' ? 'light' : 'dark'; applyTheme(); saveState(); }
