@@ -2,7 +2,8 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <!-- RẤT QUAN TRỌNG: Cấu hình cho App điện thoại (Viewport-fit=cover giúp tràn viền, user-scalable=no chống zoom loạn xạ) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Horizon</title>
@@ -47,14 +48,7 @@
             --primary-hover: #0284c7;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', system-ui, sans-serif; }
-        
-        /* FIX CHO IPHONE: Đẩy toàn bộ nội dung xuống dưới Tai thỏ/Dynamic Island */
-        body { 
-            background-color: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: row; overflow: hidden; transition: background-color 0.3s; 
-            padding-top: env(safe-area-inset-top);
-            padding-left: env(safe-area-inset-left);
-            padding-right: env(safe-area-inset-right);
-        }
+        body { background-color: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: row; overflow: hidden; transition: background-color 0.3s; }
 
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
@@ -112,16 +106,11 @@
         .timetable-toolbar { display: flex; justify-content: center; align-items: center; padding: 12px 24px; gap: 16px; width: 100%; max-width: 1250px; background: var(--panel); border-radius: var(--radius-md); border: 1px solid var(--border); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .week-label { font-size: 1rem; font-weight: 600; min-width: 220px; text-align: center; color: var(--primary); letter-spacing: -0.3px; }
 
-        /* FIX GRID CHO ĐIỆN THOẠI: Sticky Header & Time */
         .timetable { display: grid; grid-template-columns: 95px repeat(6, minmax(150px, 1fr)); grid-template-rows: 44px repeat(15, minmax(80px, 1fr)); gap: 8px; width: 100%; max-width: 1300px; height: fit-content; padding-bottom: 80px; position: relative;}
-        
-        .grid-header { background-color: var(--panel); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.9rem; color: var(--text-muted); box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid var(--border); position: sticky; top: 0; z-index: 25; }
-        .grid-header:first-child { left: 0; z-index: 30; } /* Ô góc trên cùng bên trái */
-        
-        .grid-time { display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.75rem; color: var(--text-muted); background: var(--panel); border-radius: var(--radius-sm); border: 1px dashed var(--border); position: sticky; left: 0; z-index: 20; box-shadow: 2px 0 5px rgba(0,0,0,0.05);}
+        .grid-header { background-color: var(--panel-light); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.9rem; color: var(--text-muted); box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid var(--border); }
+        .grid-time { display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 0.75rem; color: var(--text-muted); background: rgba(255,255,255,0.02); border-radius: var(--radius-sm); border: 1px dashed var(--border);}
         .grid-time strong { font-size: 0.85rem; color: var(--text); font-weight: 700; margin-bottom: 2px; }
-        
-        .grid-cell { background-color: var(--cell-bg); border: 1px dashed var(--cell-border); border-radius: var(--radius-sm); transition: 0.2s; z-index: 1;}
+        .grid-cell { background-color: var(--cell-bg); border: 1px dashed var(--cell-border); border-radius: var(--radius-sm); transition: 0.2s; }
         .grid-cell.drag-over { background-color: rgba(56, 189, 248, 0.1); border: 2px dashed var(--primary); }
 
         .course-card { border-radius: var(--radius-md); padding: 12px; font-size: 0.8rem; color: #ffffff; cursor: pointer; overflow: hidden; display: flex; flex-direction: column; z-index: 10; box-shadow: var(--shadow); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid rgba(255, 255, 255, 0.2); position: relative; width: 100%; }
@@ -159,7 +148,7 @@
         .task-controls { display: flex; align-items: center; }
         .add-task-form { display: flex; flex-direction: column; gap: 10px; background: var(--panel-light); padding: 14px; border-radius: var(--radius-sm); border: 1px dashed var(--border); }
         
-        /* CHUẨN MÀU INPUTS */
+        /* CHUẨN MÀU INPUTS THEO DARK MODE */
         input, select, textarea {
             width: 100%; padding: 10px 12px; background-color: var(--cell-bg); color: var(--text); 
             border: 1px solid var(--border); border-radius: var(--radius-sm); outline: none; font-size: 0.85rem; transition: 0.2s;
@@ -245,7 +234,7 @@
         /* POMODORO */
         #view-pomodoro { flex-direction: column; align-items: center; justify-content: center; padding: 40px; background: var(--bg);}
         .pomo-card { background: var(--panel); border: 1px solid var(--border); border-radius: 24px; padding: 48px; display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 500px; box-shadow: var(--shadow); }
-        .pomo-modes { display: flex; gap: 12px; background: var(--cell-bg); padding: 6px; border-radius: 30px; border: 1px solid var(--border); margin-bottom: 32px; flex-wrap: justify-content: center;}
+        .pomo-modes { display: flex; gap: 12px; background: var(--cell-bg); padding: 6px; border-radius: 30px; border: 1px solid var(--border); margin-bottom: 32px; flex-wrap: wrap; justify-content: center;}
         .pomo-mode-btn { padding: 8px 18px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer; color: var(--text-muted); border: none; background: transparent; transition: 0.2s; }
         .pomo-mode-btn.active { background: var(--primary); color: #fff; }
         .pomo-clock-circle { width: 240px; height: 240px; border-radius: 50%; border: 6px solid var(--primary); display: flex; align-items: center; justify-content: center; margin-bottom: 32px; box-shadow: 0 0 30px rgba(56, 189, 248, 0.2); }
@@ -308,46 +297,57 @@
            ========================================================= */
         @media (max-width: 768px) {
             body { 
-                flex-direction: column; overflow: auto; height: auto; min-height: 100vh;
-                /* Tạo khoảng đệm để không bị lẹm vào Tai thỏ/Dynamic Island */
-                padding-top: max(12px, env(safe-area-inset-top)); 
+                flex-direction: column; 
+                height: 100dvh; /* Dùng 100dvh để chuẩn với Safari iOS */
             }
             
-            /* Đẩy menu xuống dưới đáy màn hình */
+            header { 
+                /* Đẩy Header xuống dưới cụm Tai thỏ/Dynamic Island */
+                padding: calc(12px + env(safe-area-inset-top)) 16px 16px 16px; 
+                flex-direction: column; gap: 12px; text-align: center; 
+            }
+            
+            /* Thanh menu dưới cùng */
             .left-nav { 
                 order: 3; width: 100%; flex-direction: row; padding: 5px 10px; border-right: none; 
-                border-top: 1px solid var(--border); box-shadow: 0 -4px 15px rgba(0,0,0,0.2); 
-                position: fixed; bottom: 0; z-index: 100; justify-content: space-around; 
+                border-top: 1px solid var(--border); box-shadow: 0 -4px 15px rgba(0,0,0,0.4); 
+                position: fixed; bottom: 0; left: 0; z-index: 1000; 
+                justify-content: space-around; 
                 background: rgba(17, 24, 39, 0.95); backdrop-filter: blur(10px);
                 /* Vùng an toàn cho gạch home dưới cùng của iPhone */
-                padding-bottom: max(5px, env(safe-area-inset-bottom)) !important; 
-                height: calc(65px + env(safe-area-inset-bottom)) !important;
+                padding-bottom: max(10px, env(safe-area-inset-bottom)); 
+                height: auto;
+                min-height: calc(65px + env(safe-area-inset-bottom));
             }
             .brand, .launchpad, .user-profile-mini { display: none; }
-            .nav-item { flex: 1; justify-content: center; padding: 8px; margin: 0; flex-direction: column; gap: 4px; }
+            .nav-item { flex: 1; justify-content: center; padding: 8px 0; margin: 0; flex-direction: column; gap: 4px; }
             .nav-item span { font-size: 1.4rem; margin: 0; }
             .nav-item { font-size: 0; } /* Ẩn chữ, chỉ hiện Icon */
             
             .app-main { 
-                padding-bottom: calc(75px + env(safe-area-inset-bottom)); /* Chừa chỗ cho menu đáy */
+                /* Chừa chỗ cho menu đáy */
+                padding-bottom: calc(65px + env(safe-area-inset-bottom)); 
             } 
             
-            header { padding: 12px; flex-direction: column; gap: 10px; text-align: center; }
-            .header-left, .header-right { justify-content: center; width: 100%; flex-wrap: wrap;}
+            #view-timetable .main-container { flex-direction: column; overflow-y: auto; overflow-x: hidden; }
+            .timetable-wrapper { order: 1; width: 100%; height: 60vh; flex: none; overflow: auto; padding: 12px;}
+            .timetable { min-width: 800px; padding-bottom: 30px; position: relative;}
             
-            /* Bảng lịch cho phép vuốt ngang */
-            #view-timetable .main-container { flex-direction: column; overflow: visible; }
-            .sidebar { width: 100%; order: 2; border-left: none; border-top: 1px solid var(--border); box-shadow: none; height: auto; max-height: none;}
-            .timetable-wrapper { order: 1; padding: 12px; overflow-x: auto; width: 100%;}
-            .timetable { min-width: 800px; }
+            .sidebar { width: 100%; order: 2; border-left: none; border-top: 1px solid var(--border); box-shadow: none; height: auto; overflow: visible;}
             
+            /* Sticky Header cho Mobile để không bị mất cột/hàng khi vuốt */
+            .grid-header { position: sticky; top: 0; z-index: 25; background: var(--panel); box-shadow: 0 2px 5px rgba(0,0,0,0.2);}
+            .grid-header:first-child { left: 0; z-index: 30; }
+            .grid-time { position: sticky; left: 0; z-index: 20; background: var(--panel); box-shadow: 2px 0 5px rgba(0,0,0,0.2);}
+
             .dash-charts { grid-template-columns: 1fr; }
             .form-row { flex-direction: column; gap: 10px; }
-            .modal { max-height: 85vh; width: 95%; margin: 10px auto; }
+            .modal { max-height: 80vh; width: 92%; margin: 0 auto; }
             .roadmap-grid { grid-template-columns: 1fr; }
             .profile-card { padding: 20px; }
             .profile-user-left { flex-direction: column; text-align: center; }
-            .toast-container { bottom: 85px; right: 10px; left: 10px; }
+            /* Đẩy thông báo lên trên menu đáy */
+            .toast-container { bottom: calc(80px + env(safe-area-inset-bottom)); right: 10px; left: 10px; }
         }
     </style>
 </head>
@@ -817,6 +817,9 @@
             state.courses = cleanedCourses;
         }
 
+        // ==========================================
+        // CÁC HÀM XỬ LÝ GIAO DIỆN CHÍNH
+        // ==========================================
         function switchView(viewId, navElement) {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.getElementById(viewId).classList.add('active');
@@ -833,6 +836,7 @@
         function calculateCurrentCredits() { let total = 0; state.courses.forEach(c => { total += parseInt(c.credits) || 0; }); return { total: total, uniqueCount: state.courses.length }; }
         function updateHeaderCredits() { const creditData = calculateCurrentCredits(); const headerCreditEl = document.getElementById('header-current-credits'); if(headerCreditEl) headerCreditEl.textContent = creditData.total; }
 
+        // Profile
         function renderProfile() {
             const name = state.profile.name || 'User'; const firstChar = name.trim().charAt(name.trim().lastIndexOf(' ') + 1) || name.charAt(0) || 'U';
             document.getElementById('prof-inp-name').value = state.profile.name || ''; document.getElementById('prof-inp-role').value = state.profile.role || '';
@@ -857,6 +861,7 @@
             }
         }
 
+        // Dashboard
         function renderDashboard() {
             const creditData = calculateCurrentCredits(); document.getElementById('dash-total-courses').textContent = creditData.uniqueCount;
             const currentCredits = creditData.total; const pastCredits = Number(state.profile.pastCredits) || 0; document.getElementById('dash-total-credits').textContent = currentCredits + pastCredits;
@@ -872,6 +877,7 @@
             for(let d=2; d<=7; d++) { const val = dayCount[d]; const heightPercent = (val / chartMax) * 100; chartDiv.innerHTML += `<div class="bar-col"><div class="bar-fill" style="height: ${heightPercent}%;"></div><div class="bar-label">T${d}</div></div>`; }
         }
 
+        // Task
         function toggleTaskType() {
             const type = document.getElementById('kTaskType').value; const futureOpts = document.getElementById('kTaskFutureOptions');
             if (type === 'future') { futureOpts.style.display = 'flex'; } else {
@@ -905,6 +911,7 @@
         function toggleTask(id) { const task = state.kanbanTasks.find(t => t.id === id); if (task) { task.done = !task.done; saveState(); } }
         function delKTask(id) { state.kanbanTasks = state.kanbanTasks.filter(x => x.id !== id); saveState(); }
 
+        // Grid Lịch
         function getWeekRange(offset) {
             const now = new Date(); const day = now.getDay() === 0 ? 7 : now.getDay(); 
             const monday = new Date(now); monday.setDate(now.getDate() - day + 1 + (offset * 7)); monday.setHours(0,0,0,0);
@@ -988,6 +995,7 @@
             }).join('');
         }
 
+        // Roadmap
         function filterGoals(cat, element) { currentGoalFilter = cat; document.querySelectorAll('#view-roadmap .k-tab').forEach(el => el.classList.remove('active')); if(element) element.classList.add('active'); renderRoadmap(); }
         function toggleGoalDate() { const toggle = document.getElementById('goalDeadlineToggle').value; const dateInp = document.getElementById('goalDate'); if(toggle === 'yes') { dateInp.style.display = 'block'; } else { dateInp.style.display = 'none'; dateInp.value = ''; } }
 
@@ -1241,7 +1249,7 @@
             else showToast(`Không tìm thấy sự kiện hợp lệ.`);
         }
 
-        // --- POMODORO NÂNG CẤP CHỐNG CHẶN TRÌNH DUYỆT ---
+        // --- POMODORO CHỐNG CHẶN TRÌNH DUYỆT ---
         let pomoTime = 25 * 60; let pomoInterval = null; let isPomoRunning = false; let currentPomoMode = 'focus';
         
         function updatePomoDisplay() {
