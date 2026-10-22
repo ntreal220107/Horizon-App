@@ -59,9 +59,6 @@
 
         .left-nav { width: 250px; background-color: var(--panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 24px 16px; z-index: 1000; flex-shrink: 0; box-shadow: 2px 0 15px rgba(0,0,0,0.1); }
         .brand { font-size: 1.4rem; font-weight: 800; color: var(--primary); margin-bottom: 24px; padding: 0 12px; display: flex; align-items: center; gap: 8px; letter-spacing: -0.5px; }
-        .launchpad { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 24px; padding: 0 10px; }
-        .launch-btn { background: var(--panel-light); border: 1px solid var(--border); border-radius: 8px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: var(--text); text-decoration: none; transition: 0.2s; }
-        .launch-btn:hover { background: var(--primary); color: #fff; transform: translateY(-2px); box-shadow: 0 4px 10px rgba(56, 189, 248, 0.2); }
 
         .nav-item { padding: 12px 16px; margin-bottom: 8px; border-radius: var(--radius-sm); color: var(--text-muted); text-decoration: none; font-weight: 600; font-size: 0.95rem; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.2s ease; }
         .nav-item:hover { background-color: rgba(255,255,255,0.05); color: var(--text); }
@@ -96,12 +93,11 @@
         .view-section.active { display: flex; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Timetable View & MỞ RỘNG SIDEBAR BÊN PHẢI */
+        /* Timetable View & SIDEBAR BÊN PHẢI RỘNG */
         #view-timetable { flex-direction: row; }
         .main-container { display: flex; flex: 1; overflow: hidden; width: 100%; }
         .timetable-wrapper { flex: 1; overflow: auto; padding: 12px 20px; display: flex; flex-direction: column; align-items: center; position: relative;}
         
-        /* SIDEBAR BÊN PHẢI ĐƯỢC MỞ RỘNG (TỪ 340PX LÊN 460PX - 520PX) */
         .sidebar { 
             width: clamp(440px, 28vw, 520px); 
             background-color: var(--panel); 
@@ -151,16 +147,13 @@
         .course-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 100%; background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 100%); pointer-events: none; }
         .course-card:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 10px 25px rgba(0,0,0,0.5); filter: brightness(1.1); z-index: 15 !important; }
 
-        /* TỐI ƯU KHÔNG GIAN SIDEBAR BÊN PHẢI */
         .sidebar-section { padding: 16px 20px; border-bottom: 1px solid var(--border); }
         .sidebar-section h3 { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; }
         .today-banner { font-size: 1.05rem; font-weight: 800; color: var(--primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
         
-        /* Lịch học hôm nay chia 2 cột để tiết kiệm chiều dọc */
         #todayClasses { display: grid; grid-template-columns: repeat(auto-fill, minmax(195px, 1fr)); gap: 8px; }
         .today-item { background: var(--panel-light); border-left: 4px solid var(--primary); padding: 8px 12px; border-radius: var(--radius-sm); font-size: 0.82rem; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
-        /* QUẢN LÝ NHIỆM VỤ RỘNG RÃI & BAO QUÁT HƠN */
         .task-list { flex: 1; display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; overflow-y: auto; padding-right: 4px; min-height: 240px; }
         .task-item { display: flex; align-items: center; gap: 12px; background: var(--panel-light); padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border); transition: 0.2s; }
         .task-item:hover { border-color: var(--primary); background: rgba(31, 41, 55, 0.9); }
@@ -193,6 +186,37 @@
         }
         input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.15); }
         input:disabled { opacity: 0.6; cursor: not-allowed; background-color: var(--panel) !important; border-color: transparent !important; }
+
+        /* VIEW TRUY CẬP NHANH (QUICK ACCESS) */
+        #view-quickaccess { padding: 32px; overflow-y: auto; flex-direction: column; background: var(--bg); gap: 24px; }
+        .qa-top-bar { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
+        .qa-groups-container { display: flex; flex-direction: column; gap: 24px; padding-bottom: 60px; }
+        .qa-group-card { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 20px 24px; box-shadow: var(--shadow); }
+        .qa-group-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px dashed var(--border); }
+        .qa-group-title { font-size: 1.15rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+        .qa-links-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; align-items: stretch; }
+        
+        .qa-link-card { 
+            background: var(--panel-light); border: 1px solid var(--border); border-radius: var(--radius-sm); 
+            padding: 12px 14px; display: flex; align-items: center; gap: 12px; text-decoration: none; 
+            color: var(--text); transition: all 0.2s ease; position: relative; overflow: hidden; min-height: 64px;
+        }
+        .qa-link-card:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.25); background: rgba(56, 189, 248, 0.06); }
+        .qa-link-icon { width: 38px; height: 38px; border-radius: 8px; background: var(--cell-bg); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; font-size: 1.2rem; }
+        .qa-link-icon img { width: 24px; height: 24px; object-fit: contain; }
+        .qa-link-info { flex: 1; overflow: hidden; padding-right: 18px; }
+        .qa-link-name { font-size: 0.9rem; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+        .qa-link-url { font-size: 0.72rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .qa-link-actions { position: absolute; top: 6px; right: 6px; display: flex; gap: 2px; opacity: 0; transition: opacity 0.2s; background: var(--panel); border-radius: 6px; padding: 2px; border: 1px solid var(--border); }
+        .qa-link-card:hover .qa-link-actions { opacity: 1; }
+        
+        .qa-add-link-btn { 
+            background: rgba(56, 189, 248, 0.04); border: 1px dashed var(--primary); border-radius: var(--radius-sm); 
+            padding: 12px 14px; display: flex; align-items: center; justify-content: center; gap: 10px; 
+            color: var(--primary); font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: all 0.2s ease; min-height: 64px;
+        }
+        .qa-add-link-btn:hover { background: rgba(56, 189, 248, 0.12); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(56, 189, 248, 0.15); }
+        .qa-plus-circle { width: 32px; height: 32px; border-radius: 50%; background: rgba(56, 189, 248, 0.15); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: 800; line-height: 1; }
 
         /* MỤC TIÊU / ROADMAP VIEW */
         #view-roadmap { padding: 32px; overflow-y: auto; flex-direction: column; background: var(--bg); }
@@ -334,7 +358,7 @@
                 background: rgba(17, 24, 39, 0.95); backdrop-filter: blur(10px);
                 padding-bottom: max(10px, env(safe-area-inset-bottom)); height: auto; min-height: calc(65px + env(safe-area-inset-bottom));
             }
-            .brand, .launchpad, .user-profile-mini { display: none; }
+            .brand, .user-profile-mini { display: none; }
             .nav-item { flex: 1; justify-content: center; padding: 8px 0; margin: 0; flex-direction: column; gap: 4px; }
             .nav-item span { font-size: 1.4rem; margin: 0; }
             .nav-item { font-size: 0; }
@@ -355,6 +379,8 @@
             .modal { max-height: 80vh; width: 92%; margin: 0 auto; z-index: 2005; }
             .modal-overlay { z-index: 2000; }
             .roadmap-grid { grid-template-columns: 1fr; }
+            .qa-links-grid { grid-template-columns: 1fr; }
+            .qa-link-actions { opacity: 1; }
             .profile-card { padding: 20px; }
             .profile-user-left { flex-direction: column; text-align: center; }
             .toast-container { bottom: calc(80px + env(safe-area-inset-bottom)); right: 10px; left: 10px; }
@@ -363,22 +389,15 @@
 </head>
 <body>
 
-    <!-- === LEFT TASKBAR === -->
+    <!-- === LEFT TASKBAR (ĐÃ XÓA 4 ICON DƯỚI LOGO & THÊM TRUY CẬP NHANH) === -->
     <nav class="left-nav">
         <div class="brand"><span>🎓</span> Horizon</div>
-        
-        <div class="launchpad">
-            <a href="https://portal.uit.edu.vn/" target="_blank" class="launch-btn" title="Portal UIT">🏫</a>
-            <a href="https://github.com" target="_blank" class="launch-btn" title="GitHub">🐙</a>
-            <a href="https://leetcode.com" target="_blank" class="launch-btn" title="LeetCode">💻</a>
-            <a href="https://chatgpt.com" target="_blank" class="launch-btn" title="ChatGPT">🤖</a>
-        </div>
 
         <a class="nav-item active" id="nav-timetable" onclick="switchView('view-timetable', this)"><span>📅</span> Thời khóa biểu</a>
+        <a class="nav-item" id="nav-quickaccess" onclick="switchView('view-quickaccess', this)"><span>🚀</span> Truy cập nhanh</a>
         <a class="nav-item" id="nav-sheet" onclick="switchView('view-sheet', this)"><span>📑</span> Kế hoạch Đại học</a>
         <a class="nav-item" id="nav-dashboard" onclick="switchView('view-dashboard', this)"><span>📊</span> Dashboard</a>
         <a class="nav-item" id="nav-roadmap" onclick="switchView('view-roadmap', this)"><span>🎯</span> Các mục tiêu</a>
-        
         <a class="nav-item" id="nav-pomodoro" onclick="switchView('view-pomodoro', this)"><span>⏱️</span> Tập trung (Pomodoro)</a>
         <a class="nav-item" id="nav-profile" onclick="switchView('view-profile', this)"><span>👤</span> Thông tin cá nhân</a>
         <a class="nav-item" onclick="toggleTheme()" style="margin-top: 8px;"><span id="theme-icon">🌓</span> Giao diện</a>
@@ -420,11 +439,10 @@
                         <button class="btn" onclick="changeWeek(1)" style="padding: 8px 16px;">Tuần sau ❯</button>
                         <button class="btn btn-primary" onclick="resetWeek()">Về hiện tại</button>
                     </div>
-                    <!-- Lưới thời khóa biểu Render bằng JS -->
                     <div class="timetable" id="timetableGrid"></div>
                 </div>
 
-                <!-- SIDEBAR PHẢI ĐÃ ĐƯỢC MỞ RỘNG & TỐI ƯU DIỆN TÍCH -->
+                <!-- SIDEBAR PHẢI MỞ RỘNG -->
                 <aside class="sidebar">
                     <div class="sidebar-section">
                         <div class="today-banner" id="todayDateStr">Hôm nay</div>
@@ -473,6 +491,18 @@
                     </div>
                 </aside>
             </div>
+        </div>
+
+        <!-- VIEW MỚI: TRUY CẬP NHANH (QUICK ACCESS) -->
+        <div id="view-quickaccess" class="view-section">
+            <div class="qa-top-bar">
+                <div>
+                    <h2 style="font-size: 1.8rem; margin-bottom: 4px; color: var(--text); letter-spacing: -0.5px;">Truy cập nhanh</h2>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;">Quản lý các nhóm trang web học tập, luyện thi tiếng Anh (VSTEP, IELTS) và công cụ thường dùng.</p>
+                </div>
+                <button class="btn btn-primary" style="padding: 10px 20px; font-size: 0.9rem;" onclick="openLinkGroupModal()">+ Tạo thêm một nhóm mới</button>
+            </div>
+            <div id="qaGroupsContainer" class="qa-groups-container"></div>
         </div>
 
         <!-- VIEW GOOGLE SHEET NHÚNG -->
@@ -584,6 +614,54 @@
                     <div class="form-group"><label>Email liên hệ</label><input type="text" id="prof-inp-email" disabled></div>
                     <div class="form-group"><label>Tín chỉ tích lũy (Các kỳ trước)</label><input type="number" id="prof-inp-credits" disabled placeholder="Ví dụ: 30" min="0"></div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL TẠO / SỬA NHÓM TRUY CẬP NHANH -->
+    <div class="modal-overlay" id="linkGroupModalOverlay">
+        <div class="modal" style="max-width: 440px;">
+            <div class="modal-header">
+                <h2 id="linkGroupModalTitle" style="font-size: 1.1rem;">Tạo thêm một nhóm mới</h2>
+                <button class="icon-btn" style="padding: 4px 8px; border:none;" onclick="closeModal('linkGroupModalOverlay')">✕</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="modalLinkGroupId">
+                <div class="form-group">
+                    <label>Tên nhóm trang web *</label>
+                    <input type="text" id="modalLinkGroupName" placeholder="VD: Nhóm trang web học tiếng Anh, VSTEP..." onkeypress="if(event.key === 'Enter') saveLinkGroup()">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal('linkGroupModalOverlay')">Hủy</button>
+                <button class="btn btn-primary" onclick="saveLinkGroup()" style="padding: 8px 24px;">Lưu nhóm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL THÊM / SỬA TRANG WEB TRONG NHÓM -->
+    <div class="modal-overlay" id="linkItemModalOverlay">
+        <div class="modal" style="max-width: 460px;">
+            <div class="modal-header">
+                <h2 id="linkItemModalTitle" style="font-size: 1.1rem;">Thêm trang web mới</h2>
+                <button class="icon-btn" style="padding: 4px 8px; border:none;" onclick="closeModal('linkItemModalOverlay')">✕</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="modalLinkParentGroupId">
+                <input type="hidden" id="modalLinkItemId">
+                <div class="form-group">
+                    <label>Tên của trang web *</label>
+                    <input type="text" id="modalLinkItemName" placeholder="VD: Cambridge Dictionary, Luyện thi VSTEP...">
+                </div>
+                <div class="form-group">
+                    <label>Đường dẫn URL *</label>
+                    <input type="text" id="modalLinkItemUrl" placeholder="VD: https://dictionary.cambridge.org" onkeypress="if(event.key === 'Enter') saveLinkItem()">
+                </div>
+                <p style="font-size: 0.75rem; color: var(--text-muted); line-height: 1.4;">💡 Hệ thống Horizon sẽ tự động nhận diện và hiển thị biểu tượng (Icon) của trang web dựa trên đường dẫn URL bạn nhập.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal('linkItemModalOverlay')">Hủy</button>
+                <button class="btn btn-primary" onclick="saveLinkItem()" style="padding: 8px 24px;">Lưu trang web</button>
             </div>
         </div>
     </div>
@@ -755,7 +833,6 @@
         }
 
         const DB_KEY = 'horizon_user_data_trieu';
-
         const STORAGE_KEY = 'tkb_desktop_app_data';
         const COLORS = ['#9f1239', '#166534', '#075985', '#3730a3', '#5b21b6', '#9a3412', '#86198f', '#0f766e', '#1e3a8a', '#3f6212', '#831843', '#334155'];
         const periods = [
@@ -769,8 +846,22 @@
             { p: 15, time: '21:00 - 21:45', startMin: 1260 }
         ];
 
+        const DEFAULT_LINK_GROUPS = [
+            {
+                id: 'g_default',
+                name: 'Công cụ Học tập & Lập trình',
+                links: [
+                    { id: 'l_1', name: 'Portal UIT', url: 'https://portal.uit.edu.vn/' },
+                    { id: 'l_2', name: 'GitHub', url: 'https://github.com' },
+                    { id: 'l_3', name: 'LeetCode', url: 'https://leetcode.com' },
+                    { id: 'l_4', name: 'ChatGPT', url: 'https://chatgpt.com' }
+                ]
+            }
+        ];
+
         let state = { 
             theme: 'dark', planName: 'Học kỳ mới', courses: [], note: '', kanbanTasks: [], gpaData: [], goals: [],
+            linkGroups: JSON.parse(JSON.stringify(DEFAULT_LINK_GROUPS)),
             profile: { name: 'Võ Nam Ngân Triều', role: 'Sinh viên', major: 'Công nghệ thông tin', email: 'vonamngantrieu2201@gmail.com', pastCredits: 0 }
         };
         let currentWeekOffset = 0; 
@@ -780,7 +871,7 @@
             if (!db) {
                 const saved = localStorage.getItem(STORAGE_KEY);
                 if (saved) { state = { ...state, ...JSON.parse(saved) }; cleanUpData(); }
-                applyTheme(); renderAll(); renderProfile(); renderRoadmap();
+                applyTheme(); renderAll(); renderProfile(); renderRoadmap(); renderQuickAccess();
                 showToast("Dùng chế độ Offline 🚫☁️");
                 return;
             }
@@ -802,13 +893,13 @@
                     }
                     setSyncing(false);
                 }
-                applyTheme(); renderAll(); renderProfile(); renderRoadmap();
+                applyTheme(); renderAll(); renderProfile(); renderRoadmap(); renderQuickAccess();
             }).catch(error => {
                 setSyncing(false);
                 document.getElementById('cloud-sync-icon').textContent = '❌';
                 const saved = localStorage.getItem(STORAGE_KEY);
                 if (saved) { state = { ...state, ...JSON.parse(saved) }; cleanUpData(); }
-                applyTheme(); renderAll(); renderProfile(); renderRoadmap();
+                applyTheme(); renderAll(); renderProfile(); renderRoadmap(); renderQuickAccess();
             });
         }
 
@@ -822,7 +913,7 @@
                     setSyncing(false); document.getElementById('cloud-sync-icon').textContent = '⚠️';
                 });
             }
-            renderAll(); renderRoadmap(); 
+            renderAll(); renderRoadmap(); renderQuickAccess();
         }
 
         function manualSync() { showToast("Đang đồng bộ..."); init(); }
@@ -836,6 +927,11 @@
             if(!state.kanbanTasks) state.kanbanTasks = [];
             if(!state.gpaData) state.gpaData = [];
             if(!state.goals) state.goals = [];
+            if(!state.linkGroups || !Array.isArray(state.linkGroups)) {
+                state.linkGroups = JSON.parse(JSON.stringify(DEFAULT_LINK_GROUPS));
+            } else {
+                state.linkGroups.forEach(g => { if(!g.links) g.links = []; });
+            }
             if(!state.profile) state.profile = { name: 'User', role: '', major: '', email: '', pastCredits: 0 };
             if(state.profile.pastCredits === undefined) state.profile.pastCredits = 0;
             
@@ -861,11 +957,227 @@
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             if(navElement) navElement.classList.add('active');
             document.getElementById('btn-add-course').style.display = (viewId === 'view-timetable') ? 'inline-flex' : 'none';
-            const titles = { 'view-timetable': 'Thời khóa biểu', 'view-sheet': 'Kế hoạch Đại học', 'view-dashboard': 'Tổng quan Dashboard', 'view-pomodoro': 'Phòng tập trung Pomodoro', 'view-profile': 'Hồ sơ cá nhân', 'view-roadmap': 'Các mục tiêu' };
+            const titles = { 
+                'view-timetable': 'Thời khóa biểu', 
+                'view-quickaccess': 'Truy cập nhanh',
+                'view-sheet': 'Kế hoạch Đại học', 
+                'view-dashboard': 'Tổng quan Dashboard', 
+                'view-pomodoro': 'Phòng tập trung Pomodoro', 
+                'view-profile': 'Hồ sơ cá nhân', 
+                'view-roadmap': 'Các mục tiêu' 
+            };
             document.getElementById('view-title').textContent = titles[viewId] || 'Horizon';
             if(viewId === 'view-dashboard') renderDashboard();
             if(viewId === 'view-roadmap') renderRoadmap();
-            if(viewId === 'view-profile') renderProfile(); 
+            if(viewId === 'view-profile') renderProfile();
+            if(viewId === 'view-quickaccess') renderQuickAccess();
+        }
+
+        // ==========================================
+        // CHỨC NĂNG TRUY CẬP NHANH (NHÓM & TRANG WEB)
+        // ==========================================
+        function normalizeUrl(rawUrl) {
+            let url = rawUrl.trim();
+            if (!url) return '';
+            if (!/^https?:\/\//i.test(url)) {
+                url = 'https://' + url;
+            }
+            return url;
+        }
+
+        function getDomainFromUrl(url) {
+            try {
+                const u = new URL(normalizeUrl(url));
+                return u.hostname.replace(/^www\./i, '');
+            } catch (e) {
+                return url;
+            }
+        }
+
+        function getFaviconUrl(url) {
+            const domain = getDomainFromUrl(url);
+            return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64`;
+        }
+
+        function renderQuickAccess() {
+            const container = document.getElementById('qaGroupsContainer');
+            if (!container) return;
+            if (!state.linkGroups || state.linkGroups.length === 0) {
+                container.innerHTML = `
+                <div style="text-align: center; padding: 48px 20px; background: var(--panel); border: 1px dashed var(--border); border-radius: var(--radius-md); color: var(--text-muted);">
+                    <div style="font-size: 2.2rem; margin-bottom: 10px;">🚀</div>
+                    <p style="font-size: 0.95rem; font-weight: 600; color: var(--text); margin-bottom: 6px;">Chưa có nhóm trang web nào</p>
+                    <p style="font-size: 0.82rem; margin-bottom: 16px;">Hãy bấm nút "+ Tạo thêm một nhóm mới" ở góc trên để phân loại các trang web của bạn.</p>
+                    <button class="btn btn-primary" onclick="openLinkGroupModal()">+ Tạo thêm một nhóm mới</button>
+                </div>`;
+                return;
+            }
+
+            container.innerHTML = state.linkGroups.map(group => {
+                const links = group.links || [];
+                const linksHTML = links.map(item => {
+                    const fullUrl = normalizeUrl(item.url);
+                    const domain = getDomainFromUrl(item.url);
+                    const favUrl = getFaviconUrl(item.url);
+                    return `
+                    <a href="${fullUrl}" target="_blank" rel="noopener noreferrer" class="qa-link-card" title="${item.name} (${fullUrl})">
+                        <div class="qa-link-icon">
+                            <img src="${favUrl}" alt="icon" onerror="this.style.display='none'; this.parentElement.innerHTML='🌐';">
+                        </div>
+                        <div class="qa-link-info">
+                            <div class="qa-link-name">${item.name}</div>
+                            <div class="qa-link-url">${domain}</div>
+                        </div>
+                        <div class="qa-link-actions" onclick="event.preventDefault(); event.stopPropagation();">
+                            <button class="icon-btn" style="padding: 4px 6px; border:none; background:transparent; color:var(--primary); font-size:0.75rem;" onclick="openLinkItemModal('${group.id}', '${item.id}')" title="Sửa trang web">✏️</button>
+                            <button class="icon-btn" style="padding: 4px 6px; border:none; background:transparent; color:var(--danger); font-size:0.75rem;" onclick="deleteLinkItem('${group.id}', '${item.id}')" title="Xóa trang web">✕</button>
+                        </div>
+                    </a>`;
+                }).join('');
+
+                return `
+                <div class="qa-group-card">
+                    <div class="qa-group-header">
+                        <div class="qa-group-title">
+                            <span>📁</span>
+                            <span>${group.name}</span>
+                            <span style="font-size: 0.72rem; background: rgba(56, 189, 248, 0.12); color: var(--primary); padding: 2px 8px; border-radius: 10px; font-weight: 600;">${links.length} trang</span>
+                        </div>
+                        <div style="display: flex; gap: 6px;">
+                            <button class="icon-btn" style="padding: 6px 10px; font-size: 0.8rem; color: var(--primary);" onclick="openLinkGroupModal('${group.id}')" title="Đổi tên nhóm">✏️ Sửa tên</button>
+                            <button class="icon-btn" style="padding: 6px 10px; font-size: 0.8rem; color: var(--danger);" onclick="deleteLinkGroup('${group.id}')" title="Xóa nhóm này">✕</button>
+                        </div>
+                    </div>
+                    <div class="qa-links-grid">
+                        ${linksHTML}
+                        <!-- Nút dấu cộng (+) nằm ngay dưới tên nhóm để thêm trang web mới -->
+                        <div class="qa-add-link-btn" onclick="openLinkItemModal('${group.id}')" title="Thêm trang web vào nhóm ${group.name}">
+                            <div class="qa-plus-circle">+</div>
+                            <span>Thêm trang web</span>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function openLinkGroupModal(groupId = null) {
+            document.getElementById('linkGroupModalOverlay').classList.add('active');
+            const idInput = document.getElementById('modalLinkGroupId');
+            const nameInput = document.getElementById('modalLinkGroupName');
+            const titleEl = document.getElementById('linkGroupModalTitle');
+
+            if (groupId) {
+                const g = state.linkGroups.find(x => x.id === groupId);
+                if (g) {
+                    titleEl.textContent = 'Đổi tên nhóm trang web';
+                    idInput.value = g.id;
+                    nameInput.value = g.name;
+                }
+            } else {
+                titleEl.textContent = 'Tạo thêm một nhóm mới';
+                idInput.value = '';
+                nameInput.value = '';
+            }
+            setTimeout(() => nameInput.focus(), 100);
+        }
+
+        function saveLinkGroup() {
+            const id = document.getElementById('modalLinkGroupId').value;
+            const name = document.getElementById('modalLinkGroupName').value.trim();
+            if (!name) return alert("Vui lòng nhập tên nhóm trang web!");
+
+            if (!state.linkGroups) state.linkGroups = [];
+            if (id) {
+                const g = state.linkGroups.find(x => x.id === id);
+                if (g) g.name = name;
+                showToast("Đã cập nhật tên nhóm");
+            } else {
+                state.linkGroups.push({
+                    id: 'g_' + Date.now(),
+                    name: name,
+                    links: []
+                });
+                showToast("Đã tạo nhóm mới thành công!");
+            }
+            closeModal('linkGroupModalOverlay');
+            saveState();
+        }
+
+        function deleteLinkGroup(groupId) {
+            const g = state.linkGroups.find(x => x.id === groupId);
+            if (!g) return;
+            if (confirm(`Bạn có chắc muốn xóa nhóm "${g.name}" và toàn bộ các trang web bên trong?`)) {
+                state.linkGroups = state.linkGroups.filter(x => x.id !== groupId);
+                saveState();
+                showToast("Đã xóa nhóm trang web");
+            }
+        }
+
+        function openLinkItemModal(groupId, linkId = null) {
+            document.getElementById('linkItemModalOverlay').classList.add('active');
+            document.getElementById('modalLinkParentGroupId').value = groupId;
+            const itemIdInp = document.getElementById('modalLinkItemId');
+            const nameInp = document.getElementById('modalLinkItemName');
+            const urlInp = document.getElementById('modalLinkItemUrl');
+            const titleEl = document.getElementById('linkItemModalTitle');
+
+            const g = state.linkGroups.find(x => x.id === groupId);
+            if (linkId && g && g.links) {
+                const item = g.links.find(l => l.id === linkId);
+                if (item) {
+                    titleEl.textContent = 'Chỉnh sửa trang web';
+                    itemIdInp.value = item.id;
+                    nameInp.value = item.name;
+                    urlInp.value = item.url;
+                }
+            } else {
+                titleEl.textContent = g ? `Thêm vào: ${g.name}` : 'Thêm trang web mới';
+                itemIdInp.value = '';
+                nameInp.value = '';
+                urlInp.value = '';
+            }
+            setTimeout(() => nameInp.focus(), 100);
+        }
+
+        function saveLinkItem() {
+            const groupId = document.getElementById('modalLinkParentGroupId').value;
+            const linkId = document.getElementById('modalLinkItemId').value;
+            const name = document.getElementById('modalLinkItemName').value.trim();
+            const rawUrl = document.getElementById('modalLinkItemUrl').value.trim();
+
+            if (!name) return alert("Vui lòng nhập Tên của trang web!");
+            if (!rawUrl) return alert("Vui lòng nhập Đường dẫn URL của trang web!");
+
+            const formattedUrl = normalizeUrl(rawUrl);
+            const g = state.linkGroups.find(x => x.id === groupId);
+            if (!g) return;
+            if (!g.links) g.links = [];
+
+            if (linkId) {
+                const item = g.links.find(l => l.id === linkId);
+                if (item) {
+                    item.name = name;
+                    item.url = formattedUrl;
+                }
+                showToast("Đã cập nhật trang web!");
+            } else {
+                g.links.push({
+                    id: 'l_' + Date.now(),
+                    name: name,
+                    url: formattedUrl
+                });
+                showToast("Đã thêm trang web vào hệ thống!");
+            }
+            closeModal('linkItemModalOverlay');
+            saveState();
+        }
+
+        function deleteLinkItem(groupId, linkId) {
+            const g = state.linkGroups.find(x => x.id === groupId);
+            if (!g || !g.links) return;
+            g.links = g.links.filter(l => l.id !== linkId);
+            saveState();
+            showToast("Đã xóa trang web");
         }
 
         function calculateCurrentCredits() { let total = 0; state.courses.forEach(c => { total += parseInt(c.credits) || 0; }); return { total: total, uniqueCount: state.courses.length }; }
@@ -917,7 +1229,6 @@
             }
         }
 
-        // CHỨC NĂNG SỬA NHIỆM VỤ (TASK)
         function editKTask(id) {
             const task = state.kanbanTasks.find(t => t.id === id);
             if (task) {
@@ -1284,6 +1595,7 @@
                     } else if (parsed.courses) {
                         state.courses = parsed.courses; if(parsed.planName) state.planName = parsed.planName; if(parsed.profile) state.profile = parsed.profile;
                         if(parsed.kanbanTasks) state.kanbanTasks = parsed.kanbanTasks; if(parsed.gpaData) state.gpaData = parsed.gpaData; if(parsed.goals) state.goals = parsed.goals;
+                        if(parsed.linkGroups) state.linkGroups = parsed.linkGroups;
                     }
                     let cleanedCourses = [];
                     state.courses.forEach(c => {
@@ -1309,6 +1621,7 @@
                     } else if (parsed.courses) {
                         state.courses = parsed.courses; if(parsed.planName) state.planName = parsed.planName; if(parsed.profile) state.profile = parsed.profile;
                         if(parsed.kanbanTasks) state.kanbanTasks = parsed.kanbanTasks; if(parsed.gpaData) state.gpaData = parsed.gpaData; if(parsed.goals) state.goals = parsed.goals;
+                        if(parsed.linkGroups) state.linkGroups = parsed.linkGroups;
                     }
                     let cleanedCourses = [];
                     state.courses.forEach(c => {
