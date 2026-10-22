@@ -57,7 +57,7 @@
         ::-webkit-scrollbar-thumb { background: var(--panel-light); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
-        .left-nav { width: 260px; background-color: var(--panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 24px 16px; z-index: 1000; flex-shrink: 0; box-shadow: 2px 0 15px rgba(0,0,0,0.1); }
+        .left-nav { width: 250px; background-color: var(--panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 24px 16px; z-index: 1000; flex-shrink: 0; box-shadow: 2px 0 15px rgba(0,0,0,0.1); }
         .brand { font-size: 1.4rem; font-weight: 800; color: var(--primary); margin-bottom: 24px; padding: 0 12px; display: flex; align-items: center; gap: 8px; letter-spacing: -0.5px; }
         .launchpad { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 24px; padding: 0 10px; }
         .launch-btn { background: var(--panel-light); border: 1px solid var(--border); border-radius: 8px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: var(--text); text-decoration: none; transition: 0.2s; }
@@ -75,7 +75,7 @@
         .user-info-mini p { font-size: 0.7rem; color: var(--text-muted); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         .app-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
-        header { display: flex; justify-content: space-between; align-items: center; padding: 16px 28px; background-color: var(--panel); border-bottom: 1px solid var(--border); z-index: 20; box-shadow: 0 1px 10px rgba(0,0,0,0.1); }
+        header { display: flex; justify-content: space-between; align-items: center; padding: 14px 28px; background-color: var(--panel); border-bottom: 1px solid var(--border); z-index: 20; box-shadow: 0 1px 10px rgba(0,0,0,0.1); }
         .header-left { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
         .header-left h1 { font-size: 1.25rem; font-weight: 700; margin: 0; letter-spacing: -0.5px; color: var(--text); }
         .plan-name { color: var(--primary); cursor: pointer; padding: 4px 10px; border-radius: var(--radius-sm); font-weight: 600; background-color: rgba(56, 189, 248, 0.1); transition: 0.2s; font-size: 0.9rem; border: 1px solid rgba(56, 189, 248, 0.2); }
@@ -96,25 +96,36 @@
         .view-section.active { display: flex; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Timetable View */
+        /* Timetable View & MỞ RỘNG SIDEBAR BÊN PHẢI */
         #view-timetable { flex-direction: row; }
         .main-container { display: flex; flex: 1; overflow: hidden; width: 100%; }
-        .timetable-wrapper { flex: 1; overflow: auto; padding: 16px 24px; display: flex; flex-direction: column; align-items: center; position: relative;}
-        .sidebar { width: 340px; background-color: var(--panel); border-left: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; box-shadow: -4px 0 20px rgba(0,0,0,0.1); z-index: 10; }
+        .timetable-wrapper { flex: 1; overflow: auto; padding: 12px 20px; display: flex; flex-direction: column; align-items: center; position: relative;}
         
-        .timetable-toolbar { display: flex; justify-content: center; align-items: center; padding: 12px 24px; gap: 16px; width: 100%; max-width: 1250px; background: var(--panel); border-radius: var(--radius-md); border: 1px solid var(--border); margin-top: 16px; margin-bottom: 16px; flex-shrink: 0;}
+        /* SIDEBAR BÊN PHẢI ĐƯỢC MỞ RỘNG (TỪ 340PX LÊN 460PX - 520PX) */
+        .sidebar { 
+            width: clamp(440px, 28vw, 520px); 
+            background-color: var(--panel); 
+            border-left: 1px solid var(--border); 
+            display: flex; 
+            flex-direction: column; 
+            overflow-y: auto; 
+            flex-shrink: 0; 
+            box-shadow: -4px 0 20px rgba(0,0,0,0.15); 
+            z-index: 10; 
+        }
+        
+        .timetable-toolbar { display: flex; justify-content: center; align-items: center; padding: 10px 20px; gap: 16px; width: 100%; max-width: 1200px; background: var(--panel); border-radius: var(--radius-md); border: 1px solid var(--border); margin-top: 8px; margin-bottom: 14px; flex-shrink: 0;}
         .week-label { font-size: 1rem; font-weight: 600; min-width: 220px; text-align: center; color: var(--primary); letter-spacing: -0.3px; }
 
         .timetable { 
             display: grid; 
-            grid-template-columns: 80px repeat(6, minmax(160px, 1fr)); 
+            grid-template-columns: 75px repeat(6, minmax(145px, 1fr)); 
             grid-template-rows: 45px repeat(15, minmax(85px, 1fr)); 
             gap: 0; 
-            width: 100%; max-width: 1300px; height: fit-content; 
+            width: 100%; max-width: 1200px; height: fit-content; 
             padding-bottom: 80px; position: relative;
         }
         
-        /* CÁC CLASS HEADER VÀ CELL ĐÃ ĐƯỢC CHUYỂN INLINE ĐỂ KHÔNG BỊ TRƯỢT */
         .grid-header { 
             background-color: var(--panel); display: flex; align-items: center; justify-content: center; 
             font-weight: 600; font-size: 0.85rem; color: var(--text-muted); 
@@ -140,39 +151,43 @@
         .course-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 100%; background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 100%); pointer-events: none; }
         .course-card:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 10px 25px rgba(0,0,0,0.5); filter: brightness(1.1); z-index: 15 !important; }
 
-        .sidebar-section { padding: 20px; border-bottom: 1px solid var(--border); }
-        .sidebar-section h3 { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 14px; letter-spacing: 0.5px; font-weight: 700; }
-        .today-banner { font-size: 1.1rem; font-weight: 800; color: var(--primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-        .today-item { background: var(--panel-light); border-left: 4px solid var(--primary); padding: 10px 14px; border-radius: var(--radius-sm); margin-bottom: 10px; font-size: 0.85rem; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        /* TỐI ƯU KHÔNG GIAN SIDEBAR BÊN PHẢI */
+        .sidebar-section { padding: 16px 20px; border-bottom: 1px solid var(--border); }
+        .sidebar-section h3 { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; }
+        .today-banner { font-size: 1.05rem; font-weight: 800; color: var(--primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        
+        /* Lịch học hôm nay chia 2 cột để tiết kiệm chiều dọc */
+        #todayClasses { display: grid; grid-template-columns: repeat(auto-fill, minmax(195px, 1fr)); gap: 8px; }
+        .today-item { background: var(--panel-light); border-left: 4px solid var(--primary); padding: 8px 12px; border-radius: var(--radius-sm); font-size: 0.82rem; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
-        /* SINGLE LIST TASK MANAGER */
-        .task-list { flex: 1; display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; overflow-y: auto; padding-right: 4px; min-height: 150px; }
-        .task-item { display: flex; align-items: flex-start; gap: 12px; background: var(--panel-light); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); transition: 0.2s; }
-        .task-item:hover { border-color: var(--primary); }
+        /* QUẢN LÝ NHIỆM VỤ RỘNG RÃI & BAO QUÁT HƠN */
+        .task-list { flex: 1; display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; overflow-y: auto; padding-right: 4px; min-height: 240px; }
+        .task-item { display: flex; align-items: center; gap: 12px; background: var(--panel-light); padding: 10px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border); transition: 0.2s; }
+        .task-item:hover { border-color: var(--primary); background: rgba(31, 41, 55, 0.9); }
         .task-item.pri-high { border-left: 3px solid var(--danger); }
         .task-item.pri-med { border-left: 3px solid var(--warning); }
         .task-item.pri-low { border-left: 3px solid var(--primary); }
         .task-item.done { opacity: 0.45; background: transparent; border-color: var(--border);}
         
-        .task-checkbox-wrapper { position: relative; display: inline-block; width: 22px; height: 22px; flex-shrink: 0; cursor: pointer; }
+        .task-checkbox-wrapper { position: relative; display: inline-block; width: 20px; height: 20px; flex-shrink: 0; cursor: pointer; }
         .task-checkbox-wrapper input { opacity: 0; width: 0; height: 0; position: absolute; }
-        .task-checkmark { position: absolute; top: 0; left: 0; width: 22px; height: 22px; background-color: transparent; border: 2px solid var(--text-muted); border-radius: 6px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
+        .task-checkmark { position: absolute; top: 0; left: 0; width: 20px; height: 20px; background-color: transparent; border: 2px solid var(--text-muted); border-radius: 6px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
         .task-checkbox-wrapper:hover .task-checkmark { border-color: var(--primary); }
         .task-checkbox-wrapper input:checked ~ .task-checkmark { background-color: var(--success); border-color: var(--success); }
-        .task-checkmark::after { content: "✓"; color: white; font-size: 14px; font-weight: 800; opacity: 0; transform: scale(0.5); transition: all 0.2s; }
+        .task-checkmark::after { content: "✓"; color: white; font-size: 13px; font-weight: 800; opacity: 0; transform: scale(0.5); transition: all 0.2s; }
         .task-checkbox-wrapper input:checked ~ .task-checkmark::after { opacity: 1; transform: scale(1); }
 
-        .task-content { flex: 1; display: flex; flex-direction: column; gap: 5px; overflow: hidden; }
-        .task-text { font-size: 0.85rem; font-weight: 600; color: var(--text); line-height: 1.3; word-wrap: break-word; }
-        .task-meta { font-size: 0.7rem; color: var(--text-muted); display: flex; gap: 8px; flex-wrap: wrap;}
-        .task-badge { font-size: 0.65rem; padding: 3px 6px; border-radius: 4px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; width: fit-content;}
-        .badge-time { color: var(--primary); background: rgba(56, 189, 248, 0.1); }
-        .badge-repeat { color: var(--warning); background: rgba(245, 158, 11, 0.1); }
-        .task-controls { display: flex; align-items: center; }
-        .add-task-form { display: flex; flex-direction: column; gap: 10px; background: var(--panel-light); padding: 14px; border-radius: var(--radius-sm); border: 1px dashed var(--border); }
+        .task-content { flex: 1; display: flex; flex-direction: column; gap: 4px; overflow: hidden; }
+        .task-text { font-size: 0.88rem; font-weight: 600; color: var(--text); line-height: 1.35; word-wrap: break-word; }
+        .task-meta { font-size: 0.72rem; color: var(--text-muted); display: flex; gap: 8px; flex-wrap: wrap;}
+        .task-badge { font-size: 0.68rem; padding: 2px 7px; border-radius: 4px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; width: fit-content;}
+        .badge-time { color: var(--primary); background: rgba(56, 189, 248, 0.12); }
+        .badge-repeat { color: var(--warning); background: rgba(245, 158, 11, 0.12); }
+        .task-controls { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
+        .add-task-form { display: flex; flex-direction: column; gap: 8px; background: var(--panel-light); padding: 12px; border-radius: var(--radius-sm); border: 1px dashed var(--border); flex-shrink: 0; }
         
         input, select, textarea {
-            width: 100%; padding: 10px 12px; background-color: var(--cell-bg); color: var(--text); 
+            width: 100%; padding: 8px 12px; background-color: var(--cell-bg); color: var(--text); 
             border: 1px solid var(--border); border-radius: var(--radius-sm); outline: none; font-size: 0.85rem; transition: 0.2s;
             color-scheme: dark; 
         }
@@ -304,7 +319,10 @@
         .sync-icon.syncing { animation: spin 1s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* BẮT BUỘC ĐỂ MOBILE KHÔNG BỊ OVERLAP LƯỚI */
+        /* RESPONSIVE CHO MÀN HÌNH LAPTOP NHỎ & ĐIỆN THOẠI */
+        @media (max-width: 1280px) {
+            .sidebar { width: 400px; }
+        }
         @media (max-width: 768px) {
             body { flex-direction: column; height: 100dvh; }
             header { padding: calc(12px + env(safe-area-inset-top)) 16px 16px 16px; flex-direction: column; gap: 12px; text-align: center; }
@@ -327,10 +345,10 @@
             .timetable-toolbar { margin-top: 10px; margin-bottom: 10px; width: 100%; }
             .timetable { min-width: 800px; gap: 0; }
             
-            /* HỦY BỎ STICKY HEADER TRÊN MOBILE ĐỂ KHÔNG BỊ CHỒNG VỚI NỘI DUNG */
             .grid-header, .grid-time { position: relative !important; top: auto !important; left: auto !important; z-index: 1 !important; box-shadow: none !important; }
             
             .sidebar { width: 100%; order: 2; border-left: none; border-top: 1px solid var(--border); box-shadow: none; height: auto; overflow: visible;}
+            #todayClasses { grid-template-columns: 1fr; }
 
             .dash-charts { grid-template-columns: 1fr; }
             .form-row { flex-direction: column; gap: 10px; }
@@ -406,6 +424,7 @@
                     <div class="timetable" id="timetableGrid"></div>
                 </div>
 
+                <!-- SIDEBAR PHẢI ĐÃ ĐƯỢC MỞ RỘNG & TỐI ƯU DIỆN TÍCH -->
                 <aside class="sidebar">
                     <div class="sidebar-section">
                         <div class="today-banner" id="todayDateStr">Hôm nay</div>
@@ -413,38 +432,44 @@
                     </div>
                     
                     <div class="sidebar-section" style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
-                        <h3>✓ QUẢN LÝ NHIỆM VỤ</h3>
+                        <h3>
+                            <span>✓ QUẢN LÝ NHIỆM VỤ</span>
+                            <span id="taskCountBadge" style="font-size: 0.72rem; background: rgba(56, 189, 248, 0.15); color: var(--primary); padding: 2px 8px; border-radius: 10px;">0 việc</span>
+                        </h3>
                         <div class="task-list" id="taskList"></div>
                         
                         <div class="add-task-form">
-                            <input type="text" id="kTaskName" placeholder="Tên nhiệm vụ..." onkeypress="if(event.key === 'Enter') addKanbanTask()">
-                            <select id="kTaskType" style="margin-bottom: 8px;" onchange="toggleTaskType()">
-                                <option value="upcoming">⚡ Sự kiện sắp tới (Chỉ cần tên)</option>
-                                <option value="future">📅 Sự kiện trong tương lai (Có ngày giờ)</option>
-                            </select>
-
-                            <div id="kTaskFutureOptions" style="display: none; flex-direction: column; gap: 8px;">
-                                <div class="task-inputs-row" style="display: flex; gap: 8px;">
-                                    <input type="date" id="newTaskDate" title="Ngày" style="flex:1;">
-                                    <input type="time" id="newTaskTime" title="Giờ" style="flex:1;">
-                                </div>
-                                <select id="newTaskRecurrence">
-                                    <option value="once">Chỉ một lần</option>
-                                    <option value="daily">Lặp lại hằng ngày</option>
-                                    <option value="weekly">Lặp lại hằng tuần</option>
+                            <div style="display: flex; gap: 8px;">
+                                <input type="text" id="kTaskName" placeholder="Nhập tên nhiệm vụ mới..." onkeypress="if(event.key === 'Enter') addKanbanTask()" style="flex: 1;">
+                                <button class="btn btn-primary" style="padding: 8px 16px; white-space: nowrap; flex-shrink: 0;" onclick="addKanbanTask()">+ Thêm nhiệm vụ</button>
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                <select id="kTaskType" style="flex: 1.4;" onchange="toggleTaskType()">
+                                    <option value="upcoming">⚡ Sự kiện sắp tới (Chỉ cần tên)</option>
+                                    <option value="future">📅 Sự kiện tương lai (Có ngày giờ)</option>
+                                </select>
+                                <select id="kTaskPri" style="flex: 1;">
+                                    <option value="med">Ưu tiên: Vừa</option>
+                                    <option value="high">Ưu tiên: Cao</option>
+                                    <option value="low">Ưu tiên: Thấp</option>
                                 </select>
                             </div>
-                            
-                            <select id="kTaskPri" style="margin-top: 4px;">
-                                <option value="med">Ưu tiên: Vừa</option><option value="high">Ưu tiên: Cao</option><option value="low">Ưu tiên: Thấp</option>
-                            </select>
-                            <button class="btn btn-primary btn-full" style="padding: 8px 12px; margin-bottom: 0; margin-top: 8px;" onclick="addKanbanTask()">Thêm nhiệm vụ</button>
+
+                            <div id="kTaskFutureOptions" style="display: none; gap: 8px; flex-wrap: wrap;">
+                                <input type="date" id="newTaskDate" title="Ngày" style="flex: 1; min-width: 130px;">
+                                <input type="time" id="newTaskTime" title="Giờ" style="flex: 1; min-width: 100px;">
+                                <select id="newTaskRecurrence" style="flex: 1; min-width: 120px;">
+                                    <option value="once">Chỉ một lần</option>
+                                    <option value="daily">Lặp hằng ngày</option>
+                                    <option value="weekly">Lặp hằng tuần</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="sidebar-section" style="border-bottom: none;">
-                        <h3>📝 Ghi chú nhanh</h3>
-                        <textarea id="noteInput" placeholder="Note lại ý tưởng, kế hoạch ôn thi..." oninput="saveNote()"></textarea>
+                    <div class="sidebar-section" style="border-bottom: none; padding-top: 12px; padding-bottom: 14px;">
+                        <h3 style="margin-bottom: 8px;">📝 Ghi chú nhanh</h3>
+                        <textarea id="noteInput" rows="2" placeholder="Note lại ý tưởng, kế hoạch ôn thi..." oninput="saveNote()" style="resize: vertical; min-height: 48px;"></textarea>
                     </div>
                 </aside>
             </div>
@@ -485,7 +510,6 @@
                 <div class="k-tab" onclick="filterGoals('career', this)">🚀 Sự nghiệp</div>
             </div>
 
-            <!-- Nút bật form Thêm/Sửa Mục Tiêu mới -->
             <div style="margin-bottom: 24px;">
                 <button class="btn btn-primary" onclick="openGoalModal()">+ Thêm mục tiêu mới</button>
             </div>
@@ -564,7 +588,7 @@
         </div>
     </div>
 
-    <!-- MODAL GOAL (THÊM / SỬA MỤC TIÊU MỚI) -->
+    <!-- MODAL GOAL (THÊM / SỬA MỤC TIÊU) -->
     <div class="modal-overlay" id="goalModalOverlay">
         <div class="modal">
             <div class="modal-header"><h2 id="goalModalTitle" style="font-size:1.1rem;">Thêm/Sửa Mục Tiêu</h2><button class="icon-btn" style="padding: 4px 8px; border:none;" onclick="closeModal('goalModalOverlay')">✕</button></div>
@@ -908,12 +932,16 @@
 
         function renderTasks() {
             const container = document.getElementById('taskList');
+            const badge = document.getElementById('taskCountBadge');
+            const pendingCount = state.kanbanTasks.filter(t => !t.done).length;
+            if (badge) badge.textContent = `${pendingCount} việc cần làm`;
+
             if (state.kanbanTasks.length === 0) { container.innerHTML = `<div style="font-size:0.8rem; color:var(--text-muted); padding:10px; font-style:italic;">Trống.</div>`; return; }
             const sortedTasks = [...state.kanbanTasks].sort((a, b) => { if (a.done === b.done) return b.id - a.id; return a.done ? 1 : -1; });
             container.innerHTML = sortedTasks.map(t => {
                 let badgeTime = '';
-                if (t.date || t.time) { let dt = []; if (t.date) { const dParts = t.date.split('-'); dt.push(`${dParts[2]}/${dParts[1]}/${dParts[0]}`); } if (t.time) dt.push(t.time); badgeTime = `<span class="task-badge badge-time" style="margin-bottom: 4px;">⏳ ${dt.join(' - ')}</span>`; }
-                let badgeRec = ''; if (t.recurrence && t.recurrence !== 'once') { const recMap = { 'daily': 'Hằng ngày', 'weekly': 'Hằng tuần' }; badgeRec = `<span class="task-badge badge-repeat" style="margin-bottom: 4px;">🔄 ${recMap[t.recurrence]}</span>`; }
+                if (t.date || t.time) { let dt = []; if (t.date) { const dParts = t.date.split('-'); dt.push(`${dParts[2]}/${dParts[1]}/${dParts[0]}`); } if (t.time) dt.push(t.time); badgeTime = `<span class="task-badge badge-time">⏳ ${dt.join(' - ')}</span>`; }
+                let badgeRec = ''; if (t.recurrence && t.recurrence !== 'once') { const recMap = { 'daily': 'Hằng ngày', 'weekly': 'Hằng tuần' }; badgeRec = `<span class="task-badge badge-repeat">🔄 ${recMap[t.recurrence]}</span>`; }
                 return `
                 <div class="task-item pri-${t.pri} ${t.done ? 'done' : ''}">
                     <label class="task-checkbox-wrapper"><input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTask(${t.id})"><span class="task-checkmark"></span></label>
@@ -922,8 +950,8 @@
                         ${(badgeTime || badgeRec) ? `<div class="task-meta">${badgeTime}${badgeRec}</div>` : ''}
                     </div>
                     <div class="task-controls">
-                        <button class="k-btn edit" style="background: transparent; color: var(--primary); border: none; padding: 4px; display: flex; align-items: center;" onclick="editKTask(${t.id})" title="Sửa nhiệm vụ">✏️</button>
-                        <button class="k-btn del" style="background: transparent; color: var(--danger); border: none; padding: 4px; display: flex; align-items: center;" onclick="delKTask(${t.id})" title="Xóa nhiệm vụ">✕</button>
+                        <button class="k-btn edit" style="background: transparent; color: var(--primary); border: none; padding: 4px 6px; cursor: pointer; display: flex; align-items: center;" onclick="editKTask(${t.id})" title="Sửa nhiệm vụ">✏️</button>
+                        <button class="k-btn del" style="background: transparent; color: var(--danger); border: none; padding: 4px 6px; cursor: pointer; display: flex; align-items: center;" onclick="delKTask(${t.id})" title="Xóa nhiệm vụ">✕</button>
                     </div>
                 </div>`;
             }).join('');
@@ -951,16 +979,12 @@
 
         function renderAll() { document.getElementById('currentPlanName').textContent = state.planName; document.getElementById('noteInput').value = state.note || ''; updateHeaderCredits(); renderGrid(); renderSidebar(); renderTasks(); }
 
-        // ==========================================
-        // VẼ BẢNG LỊCH BẰNG CÁCH CHUẨN HÓA HTML (KHÔNG BỊ TỤT HÀNG)
-        // ==========================================
         function renderGrid() {
             const week = getWeekRange(currentWeekOffset);
             document.getElementById('weekLabel').textContent = week.label;
             const grid = document.getElementById('timetableGrid');
 
-            // 1. TẠO HTML LƯỚI NỀN TRƯỚC (Headers & Cells) ĐỂ ĐÓNG ĐINH VỊ TRÍ
-            let htmlStr = `<div style="grid-row: 1; grid-column: 1; position: sticky; top: 0; left: 0; z-index: 30; background-color: var(--panel); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.85rem; color: var(--text-muted); border-bottom: 2px solid var(--border); border-right: 2px solid var(--border);">Thời gian \\ Thứ</div>`;
+            let htmlStr = `<div style="grid-row: 1; grid-column: 1; position: sticky; top: 0; left: 0; z-index: 30; background-color: var(--panel); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.8rem; color: var(--text-muted); border-bottom: 2px solid var(--border); border-right: 2px solid var(--border);">Thời gian \\ Thứ</div>`;
             
             const dayNums = [2, 3, 4, 5, 6, 7];
             dayNums.forEach((d, i) => {
@@ -969,21 +993,17 @@
 
             periods.forEach((p, idx) => {
                 const timeParts = p.time.split(' - ');
-                // Cột Thời gian bên trái
                 htmlStr += `<div style="grid-row: ${idx+2}; grid-column: 1; position: sticky; left: 0; z-index: 20; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--panel); border-bottom: 1px dashed var(--border); border-right: 2px solid var(--border);">
                     <strong style="color: var(--text); font-size: 0.85rem; margin-bottom: 2px;">${timeParts[0]}</strong>
                     <span style="font-size: 0.7rem; color: var(--text-muted);">${timeParts[1]}</span>
                 </div>`;
-                // Các ô trống
                 for (let d = 2; d <= 7; d++) {
                     htmlStr += `<div class="grid-cell" style="grid-row: ${idx+2}; grid-column: ${d};" ondragover="event.preventDefault()" ondragenter="this.classList.add('drag-over')" ondragleave="this.classList.remove('drag-over')" ondrop="handleDrop(event, ${d}, ${p.p})"></div>`;
                 }
             });
 
-            // Gán HTML 1 lần duy nhất để CSS Grid không bị lỗi Auto-placement
             grid.innerHTML = htmlStr;
 
-            // 2. TẠO CÁC THẺ MÔN HỌC BÊN TRÊN LƯỚI
             const visibleCourses = state.courses.filter(c => {
                 if (!c.activeDates || c.activeDates.length === 0) return true;
                 return c.activeDates.some(dStr => {
@@ -1002,7 +1022,6 @@
                 const card = document.createElement('div');
                 card.draggable = true; card.ondragstart = (e) => { e.dataTransfer.setData('text/plain', c.id); }; card.onclick = () => openCourseModal(c.id);
 
-                // Dùng CSS Inline để thẻ nổi lên mặt lưới một cách hoàn hảo
                 card.style.cssText = `
                     grid-row: ${start + 1} / span ${end - start + 1}; 
                     grid-column: ${c.day}; 
@@ -1016,14 +1035,14 @@
                 card.innerHTML = `
                 <div style="display:flex; flex-direction:column; height: 100%;">
                     <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 8px;">
-                        <span style="font-size: 0.8rem; background: rgba(0,0,0,0.25); padding: 4px 8px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 2px 4px rgba(0,0,0,0.1);">${c.code || 'SỰ KIỆN'}</span>
-                        ${c.type ? `<span style="background: rgba(0,0,0,0.4); padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 800; border: 1px solid rgba(255,255,255,0.1);">${c.type}</span>` : ''}
+                        <span style="font-size: 0.78rem; background: rgba(0,0,0,0.25); padding: 3px 7px; border-radius: 6px; font-weight: 700; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 2px 4px rgba(0,0,0,0.1);">${c.code || 'SỰ KIỆN'}</span>
+                        ${c.type ? `<span style="background: rgba(0,0,0,0.4); padding: 3px 7px; border-radius: 6px; font-size: 0.72rem; font-weight: 800; border: 1px solid rgba(255,255,255,0.1);">${c.type}</span>` : ''}
                     </div>
-                    <div style="font-size: 0.95rem; font-weight: 800; line-height: 1.35; margin-bottom: auto; text-shadow: 0 1px 3px rgba(0,0,0,0.4);">${c.name}</div>
+                    <div style="font-size: 0.92rem; font-weight: 800; line-height: 1.35; margin-bottom: auto; text-shadow: 0 1px 3px rgba(0,0,0,0.4);">${c.name}</div>
                     <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 10px;">
-                        ${c.teacher ? `<div style="font-size: 0.8rem; font-weight: 600; opacity: 0.95; display: flex; align-items: center; gap: 4px; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">👤 ${c.teacher}</div>` : ''}
-                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.35); padding: 8px 10px; border-radius: 8px; font-size: 0.85rem; font-weight: 700; border: 1px solid rgba(255,255,255,0.08); box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);">
-                            <span style="display:flex; align-items:center; gap:4px;">📍 ${c.room || 'Chưa có'}</span><span style="color: #fff; display:flex; align-items:center; gap:4px;">⏱ ${startTimeStr} - ${endTimeStr}</span>
+                        ${c.teacher ? `<div style="font-size: 0.78rem; font-weight: 600; opacity: 0.95; display: flex; align-items: center; gap: 4px; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">👤 ${c.teacher}</div>` : ''}
+                        <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.35); padding: 6px 8px; border-radius: 8px; font-size: 0.8rem; font-weight: 700; border: 1px solid rgba(255,255,255,0.08); box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);">
+                            <span style="display:flex; align-items:center; gap:3px;">📍 ${c.room || 'Chưa có'}</span><span style="color: #fff; display:flex; align-items:center; gap:3px;">⏱ ${startTimeStr} - ${endTimeStr}</span>
                         </div>
                     </div>
                 </div>`;
@@ -1051,17 +1070,15 @@
             });
             const todayClasses = Array.from(todayClassesMap.values()).sort((a,b) => a.startPeriod - b.startPeriod);
             const container = document.getElementById('todayClasses');
-            if (todayClasses.length === 0) container.innerHTML = `<span style="font-size:0.8rem; color:var(--text-muted); font-style:italic;">🎉 Hôm nay bạn không có lịch trình nào.</span>`;
+            if (todayClasses.length === 0) container.innerHTML = `<span style="font-size:0.8rem; color:var(--text-muted); font-style:italic; grid-column: 1 / -1;">🎉 Hôm nay bạn không có lịch trình nào.</span>`;
             else container.innerHTML = todayClasses.map(c => {
                 let s = Math.min(c.startPeriod, c.endPeriod); if (isNaN(s) || s < 1) s = 1; let e = Math.max(c.startPeriod, c.endPeriod); if (isNaN(e) || e > 15) e = 15;
                 const sT = periods[s-1].time.split(' - ')[0]; const eT = periods[e-1].time.split(' - ')[1];
-                return `<div class="today-item" style="border-left-color:${c.color || 'var(--primary)'}"><strong>${c.name}</strong><div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">${c.room ? '📍 ' + c.room + ' • ' : ''}⏱ ${sT} - ${eT}</div></div>`;
+                return `<div class="today-item" style="border-left-color:${c.color || 'var(--primary)'}"><strong>${c.name}</strong><div style="font-size:0.72rem; color:var(--text-muted); margin-top:3px;">${c.room ? '📍 ' + c.room + ' • ' : ''}⏱ ${sT} - ${eT}</div></div>`;
             }).join('');
         }
 
-        // ==========================================
-        // LOGIC CHỈNH SỬA MỤC TIÊU & Ý NHỎ (FIX LỖI NÚT SỬA ĐÈ LÊN ƯU TIÊN)
-        // ==========================================
+        // LOGIC CHỈNH SỬA MỤC TIÊU & Ý NHỎ
         let tempSubtasks = []; 
 
         function filterGoals(cat, element) { currentGoalFilter = cat; document.querySelectorAll('#view-roadmap .k-tab').forEach(el => el.classList.remove('active')); if(element) element.classList.add('active'); renderRoadmap(); }
@@ -1168,8 +1185,6 @@
                     <div>
                         <div class="goal-header">
                             <span class="goal-cat ${catClass}">${catLabel}</span>
-                            
-                            <!-- ĐÃ SỬA: ĐƯA NÚT SỬA VÀO CHUNG HÀNG VỚI HUY HIỆU ƯU TIÊN, KHÔNG CÒN BỊ ĐÈ -->
                             <div style="display:flex; align-items:center; gap:8px;">
                                 <span class="${priClass}">${priLabel}</span>
                                 <button class="icon-btn" style="color:var(--primary); padding:4px 8px; border:none; background:rgba(56, 189, 248, 0.15); font-size:0.85rem;" onclick="openGoalModal(${g.id})" title="Sửa mục tiêu">✏️</button>
